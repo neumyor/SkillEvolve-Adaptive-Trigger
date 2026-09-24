@@ -9,12 +9,14 @@ from collections import defaultdict
 from pathlib import Path
 
 from .alfworld_bridges import ALFWORLD_BRIDGE_TYPES
+from .config import runtime_paths
 from .paired_experiment import _paired_summary, run
 
 
-DEFAULT_TRAIN = Path("repos/pulled/SkillOpt/data/alfworld_path_split/train/items.json")
-DEFAULT_VAL = Path("repos/pulled/SkillOpt/data/alfworld_path_split/val/items.json")
-DEFAULT_TEST = Path("repos/pulled/SkillOpt/data/alfworld_path_split/test/items.json")
+_PATHS = runtime_paths()
+DEFAULT_TRAIN = _PATHS.skillopt_root / "data/alfworld_path_split/train/items.json"
+DEFAULT_VAL = _PATHS.skillopt_root / "data/alfworld_path_split/val/items.json"
+DEFAULT_TEST = _PATHS.skillopt_root / "data/alfworld_path_split/test/items.json"
 DEFAULT_SKILL = """# ALFWorld skill
 Use the current observation to choose one valid <action> command. Complete the
 household task and avoid repeating failed actions.

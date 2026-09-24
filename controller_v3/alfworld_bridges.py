@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from .core import ControllerV3, UPDATE
+from .config import runtime_paths
 from .validity import RolloutInfrastructureError
 from .llm import call_json
 from .native_bridges import BaseNativeBridge, _prepend
@@ -80,11 +81,15 @@ def _prepare_trace2skill_imports() -> None:
     Remove that cache and put Trace2Skill first on ``sys.path`` before using
     its native evolution API.
     """
-    trace_root = Path(__file__).parents[1] / "repos/pulled/Trace2Skill"
+    trace_root = runtime_paths().trace2skill_root
     for module_name in list(sys.modules):
         if module_name == "src" or module_name.startswith("src."):
             del sys.modules[module_name]
-    sys.path[:] = [p for p in sys.path if "repos/pulled/EvoSkill" not in p]
+    evoskill_root = str(runtime_paths().evoskill_root)
+    sys.path[:] = [
+        p for p in sys.path
+        if p != evoskill_root and not p.replace("\\", "/").endswith("/repos/pulled/EvoSkill")
+    ]
     trace_value = str(trace_root)
     if trace_value in sys.path:
         sys.path.remove(trace_value)
@@ -118,7 +123,7 @@ class ALFWorldBaseBridge(BaseNativeBridge):
                 failure_rate_floor=float(os.environ.get("CONTROLLER_V3_ALF_FAILURE_RATE_FLOOR", "0.4")),
             )
         super().__init__(llm, controller)
-        _prepend(Path(__file__).parents[1] / "repos/SkillOptETE")
+        _prepend(runtime_paths().skillopt_ete_root)
         from skillopt.envs.alfworld.rollout import build_alfworld_env, run_alfworld_batch
         from skillopt.gradient.aggregate import merge_patches
         from skillopt.gradient.reflect import run_minibatch_reflect
@@ -144,7 +149,7 @@ class ALFWorldBaseBridge(BaseNativeBridge):
         # this separate from API concurrency so a large evaluation batch does
         # not create hundreds of resident ALFWorld workers.
         self.env_batch_size = max(1, int(os.environ.get("CONTROLLER_V3_ALF_ENV_BATCH_SIZE", "1")))
-        _prepend(Path(__file__).parents[1] / "benchmark/alfworld-eval/src")
+        _prepend(runtime_paths().alfworld_eval_root / "src")
         self.benchmark_env = True
         timeout_value = os.environ.get("CONTROLLER_V3_ALF_API_TIMEOUT", "120").strip()
         self.api_timeout = float(timeout_value) if timeout_value else None
@@ -308,7 +313,7 @@ class ALFWorldBaseBridge(BaseNativeBridge):
         rows: list[dict[str, Any]] = []
         try:
             env = AlfworldTextEnv(
-                config_path=Path(__file__).parents[1] / "benchmark/alfworld-eval/configs/textworld.yaml",
+                config_path=runtime_paths().alfworld_eval_root / "configs/textworld.yaml",
                 split=split,
                 seed=42,
                 gamefiles=gamefiles,
@@ -545,7 +550,7 @@ class ALFWorldGEPABridge(ALFWorldBaseBridge):
     equivalence_scope = "GEPA proposal API over native ALFWorld evaluator"
 
     def _run_update(self, rows, items, skill):
-        _prepend(Path(__file__).parents[1] / "repos/pulled/GEPA/src")
+        _prepend(runtime_paths().gepa_root / "src")
         from gepa.optimize_anything import optimize_anything
         from gepa.oa.config import OptimizeAnythingConfig
 

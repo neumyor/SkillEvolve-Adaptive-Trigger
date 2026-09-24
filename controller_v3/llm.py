@@ -4,17 +4,18 @@ from __future__ import annotations
 
 import json
 import sys
-from pathlib import Path
 from typing import Any, Mapping
 
-_SEARCHQA_SRC = Path(__file__).parents[1] / "benchmark/searchqa-eval/src"
+from .config import runtime_paths
+
+_SEARCHQA_SRC = runtime_paths().searchqa_eval_root / "src"
 if str(_SEARCHQA_SRC) not in sys.path:
     sys.path.insert(0, str(_SEARCHQA_SRC))
 from searchqa_eval.agent import OpenAIChatAgent  # noqa: E402
 
 
 def load_llm_config(name: str = "searchqa-eval") -> dict[str, str]:
-    path = Path(__file__).parents[1] / "benchmark/llm_config.json"
+    path = runtime_paths().llm_config
     data = json.loads(path.read_text(encoding="utf-8"))
     cfg = data.get(name) or data.get("default")
     if not isinstance(cfg, Mapping):

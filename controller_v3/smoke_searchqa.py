@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from .adapters import ADAPTERS
+from .config import runtime_paths
 
 
 def _load_items(path: Path, limit: int) -> list[dict[str, Any]]:
@@ -82,7 +83,7 @@ def main() -> int:
     parser.add_argument(
         "--data-path",
         type=Path,
-        default=Path(__file__).parents[1] / "benchmark/searchqa-eval/data/searchqa_split/train/items.json",
+        default=runtime_paths().searchqa_eval_root / "data/searchqa_split/train/items.json",
     )
     parser.add_argument("--limit", type=int, default=8)
     parser.add_argument("--out-dir", type=Path, default=None)

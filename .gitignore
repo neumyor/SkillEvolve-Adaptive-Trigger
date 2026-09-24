@@ -1,5 +1,6 @@
 # Local secrets and machine-specific configuration
 benchmark/llm_config.json
+config/controller_v3.json
 **/.env
 **/.env.*
 *.pem

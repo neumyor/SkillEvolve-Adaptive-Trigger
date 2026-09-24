@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from .core import ControllerV3, EvidenceBuffer, EvidenceCard, UPDATE
+from .config import runtime_paths
 from .validity import RolloutInfrastructureError
 from .llm import call_json
 
@@ -84,7 +85,7 @@ class _BenchmarkSearchQAAgent:
 
 def _run_searchqa_benchmark(llm, item: Mapping[str, Any], skill: str) -> dict[str, Any]:
     """Run one task through the official SearchQA benchmark protocol."""
-    _prepend(Path(__file__).parents[1] / "benchmark/searchqa-eval/src")
+    _prepend(runtime_paths().searchqa_eval_root / "src")
     from searchqa_eval.prompts import build_system_prompt
     from searchqa_eval.runner import process_one
 
@@ -260,7 +261,7 @@ class SkillOptNativeBridge(BaseNativeBridge):
 
     def __init__(self, llm, controller=None, rollout_workers=1):
         super().__init__(llm, controller, rollout_workers=rollout_workers)
-        _prepend(Path(__file__).parents[1] / "repos/SkillOptETE")
+        _prepend(runtime_paths().skillopt_ete_root)
         from skillopt.envs.searchqa.evaluator import evaluate
         from skillopt.envs.searchqa.rollout import _build_system, _build_user
         from skillopt.gradient.reflect import run_minibatch_reflect
@@ -395,7 +396,7 @@ class GEPANativeBridge(BaseNativeBridge):
 
     def __init__(self, llm, controller=None, rollout_workers=1):
         super().__init__(llm, controller, rollout_workers=rollout_workers)
-        _prepend(Path(__file__).parents[1] / "repos/pulled/GEPA/src")
+        _prepend(runtime_paths().gepa_root / "src")
         from gepa.oa.budget import BudgetTracker
         from gepa.oa.eval_server import EvalServer
         from gepa.oa.task import Task
@@ -515,7 +516,7 @@ class EvoSkillNativeBridge(BaseNativeBridge):
 
     def __init__(self, llm, controller=None, rollout_workers=1):
         super().__init__(llm, controller, rollout_workers=rollout_workers)
-        _prepend(Path(__file__).parents[1] / "repos/pulled/EvoSkill")
+        _prepend(runtime_paths().evoskill_root)
         from src.loop.helpers import build_proposer_query
         from src.loop.runner import _score_multi_tolerance
 
@@ -610,7 +611,7 @@ class EvoSkillNativeBridge(BaseNativeBridge):
         for module_name in list(sys.modules):
             if module_name == "src" or module_name.startswith("src."):
                 del sys.modules[module_name]
-        evo_root = str(Path(__file__).parents[1] / "repos/pulled/EvoSkill")
+        evo_root = str(runtime_paths().evoskill_root)
         if evo_root not in sys.path:
             sys.path.insert(0, evo_root)
         from src.harness.agent import AgentTrace
@@ -712,15 +713,19 @@ class Trace2SkillNativeBridge(BaseNativeBridge):
 
     def __init__(self, llm, controller=None, work_dir: Path | None = None, rollout_workers=1):
         super().__init__(llm, controller, rollout_workers=rollout_workers)
-        _prepend(Path(__file__).parents[1] / "repos/pulled/Trace2Skill")
+        _prepend(runtime_paths().trace2skill_root)
         # EvoSkill and Trace2Skill both expose a top-level ``src`` package.
         # The smoke process loads both methods, so discard the earlier package
         # cache before importing Trace2Skill's native client.
         for module_name in list(sys.modules):
             if module_name == "src" or module_name.startswith("src."):
                 del sys.modules[module_name]
-        trace_root = str(Path(__file__).parents[1] / "repos/pulled/Trace2Skill")
-        sys.path[:] = [p for p in sys.path if "repos/pulled/EvoSkill" not in p]
+        trace_root = str(runtime_paths().trace2skill_root)
+        evoskill_root = str(runtime_paths().evoskill_root)
+        sys.path[:] = [
+            p for p in sys.path
+            if p != evoskill_root and not p.replace("\\", "/").endswith("/repos/pulled/EvoSkill")
+        ]
         if trace_root in sys.path:
             sys.path.remove(trace_root)
         sys.path.insert(0, trace_root)

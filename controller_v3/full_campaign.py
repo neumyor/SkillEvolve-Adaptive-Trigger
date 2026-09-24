@@ -19,6 +19,7 @@ from pathlib import Path
 from .campaign_analysis import analyze_campaign
 from .campaign_audit import audit_campaign
 from .paired_experiment import _paired_summary
+from .config import runtime_paths
 
 
 ROOT = Path(__file__).parents[1]
@@ -37,10 +38,11 @@ def _write(path: Path, value) -> None:
 
 
 def _dataset_spec(domain: str, alfworld_split_root: Path | None = None) -> dict:
+    paths = runtime_paths()
     if domain == "searchqa":
-        base = ROOT / "benchmark/searchqa-eval/data/searchqa_split"
+        base = paths.searchqa_eval_root / "data/searchqa_split"
     else:
-        base = alfworld_split_root or ROOT / "repos/pulled/SkillOpt/data/alfworld_path_split"
+        base = alfworld_split_root or paths.skillopt_root / "data/alfworld_path_split"
     paths = {split: base / f"{split}/items.json" for split in ("train", "val", "test")}
     return {"paths": paths, "counts": {split: len(json.loads(path.read_text())) for split, path in paths.items()}}
 

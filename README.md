@@ -71,6 +71,21 @@ credentials in the ignored local file
 }
 ```
 
+Machine-specific checkout locations belong in the ignored
+`config/controller_v3.json`. Start from the committed template:
+
+```bash
+cp config/controller_v3.example.json config/controller_v3.json
+```
+
+Edit the `paths` values if your checkouts live elsewhere. The template covers
+the ALFWorld and SearchQA evaluation environments, the SkillOpt/GEPA/EvoSkill/
+Trace2Skill source trees, the SkillOpt split data, and the local LLM config.
+The same values can be supplied with `CONTROLLER_V3_*_ROOT` environment
+variables; `CONTROLLER_V3_CONFIG` selects another local config file. The
+`benchmark/llm_config.json` file must contain `base_url`, `model`, and
+`api_key` for each configured endpoint. Never commit either local config file.
+
 ## Quick checks
 
 Run the deterministic tests first:

@@ -9,8 +9,11 @@ from pathlib import Path
 import sys
 import types
 
+from .config import runtime_paths
+
 ROOT = Path(__file__).resolve().parents[1]
-VENDOR = ROOT / "repos/SkillOptETE"
+
+VENDOR = runtime_paths().skillopt_ete_root
 
 
 def install_policy(trainer_module):
@@ -135,14 +138,15 @@ def main():
     from controller_v3.llm import load_llm_config
     import skillopt.engine.trainer as trainer
 
+    paths = runtime_paths()
     cfg = flatten_config(
-        load_config(str(ROOT / "repos/pulled/SkillOpt/configs/alfworld/default.yaml"))
+        load_config(str(paths.skillopt_root / "configs/alfworld/default.yaml"))
     )
     cfg.update(
         out_root=str(args.out.resolve()),
-        split_dir=str(ROOT / "repos/pulled/SkillOpt/data/alfworld_path_split"),
+        split_dir=str(paths.skillopt_root / "data/alfworld_path_split"),
         skill_init=str(
-            ROOT / "repos/pulled/SkillOpt/skillopt/envs/alfworld/skills/initial.md"
+            paths.skillopt_root / "skillopt/envs/alfworld/skills/initial.md"
         ),
         evolution_mode="fixed" if args.condition == "original" else "controller",
         observation_batch_size=4,

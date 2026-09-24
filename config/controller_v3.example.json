@@ -1,0 +1,13 @@
+{
+  "paths": {
+    "benchmark_root": "benchmark",
+    "alfworld_eval_root": "benchmark/alfworld-eval",
+    "searchqa_eval_root": "benchmark/searchqa-eval",
+    "skillopt_root": "repos/pulled/SkillOpt",
+    "skillopt_ete_root": "repos/SkillOptETE",
+    "gepa_root": "repos/pulled/GEPA",
+    "evoskill_root": "repos/pulled/EvoSkill",
+    "trace2skill_root": "repos/pulled/Trace2Skill",
+    "llm_config": "benchmark/llm_config.json"
+  }
+}

@@ -6,14 +6,17 @@ import os
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
+from .config import runtime_paths
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def fingerprint():
+    paths = runtime_paths()
     files = sorted((ROOT / 'controller_v3').rglob('*.py'))
     for domain in ('alfworld', 'searchqa'):
-        files += sorted((ROOT / f'benchmark/{domain}-eval/src').rglob('*.py'))
-    files += [ROOT / 'benchmark/alfworld-eval/configs/textworld.yaml', ROOT / 'benchmark/llm_config.json']
+        files += sorted((getattr(paths, f'{domain}_eval_root') / 'src').rglob('*.py'))
+    files += [paths.alfworld_eval_root / 'configs/textworld.yaml', paths.llm_config]
     digest = hashlib.sha256()
     for path in files:
         digest.update(str(path.relative_to(ROOT)).encode())
@@ -63,8 +66,9 @@ def main():
         llm.client.retries = args.api_attempts
         llm.client.retry_backoff = args.retry_backoff
         if domain == 'alfworld':
-            os.environ.setdefault('ALFWORLD_DATA', str(ROOT / 'benchmark/alfworld-eval/.data/alfworld'))
-            items = json.loads((ROOT / 'repos/pulled/SkillOpt/data/alfworld_path_split/val/items.json').read_text())[:2]
+            paths = runtime_paths()
+            os.environ.setdefault('ALFWORLD_DATA', str(paths.alfworld_eval_root / '.data/alfworld'))
+            items = json.loads((paths.skillopt_root / 'data/alfworld_path_split/val/items.json').read_text())[:2]
             bridge = ALFWorldBaseBridge.__new__(ALFWorldBaseBridge)
             bridge.llm = llm
             bridge.benchmark_env = True
@@ -78,7 +82,7 @@ def main():
             resumed = bridge._rollout(items, 'Use the observation and choose a valid action to finish the task.')
             assert rows == resumed and before == ledger.summary(), 'Resume repeated billable calls'
         else:
-            items = json.loads((ROOT / 'benchmark/searchqa-eval/data/searchqa_split/val/items.json').read_text())[:2]
+            items = json.loads((runtime_paths().searchqa_eval_root / 'data/searchqa_split/val/items.json').read_text())[:2]
             with ThreadPoolExecutor(max_workers=2) as pool:
                 rows = list(pool.map(lambda item: _run_searchqa_benchmark(llm, item, 'Answer from context with <answer> tags.'), items))
         require_valid_rows(rows, out)

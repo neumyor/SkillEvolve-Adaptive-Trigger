@@ -15,6 +15,7 @@ from .core import FixedImmediateSchedule
 from .llm import build_llm
 from .native_bridges import BRIDGE_TYPES
 from .usage import LedgerLLM, TokenLedger
+from .config import runtime_paths
 
 
 def _hash(value: Any) -> str:
@@ -460,7 +461,7 @@ def run(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data-path", type=Path, default=Path("benchmark/searchqa-eval/data/searchqa_split/train/items.json"))
+    parser.add_argument("--data-path", type=Path, default=runtime_paths().searchqa_eval_root / "data/searchqa_split/train/items.json")
     parser.add_argument("--out-dir", type=Path, default=Path("tmp/controller_v3_paired_smoke"))
     parser.add_argument("--start", type=int, default=100)
     parser.add_argument("--limit", type=int, default=4)
