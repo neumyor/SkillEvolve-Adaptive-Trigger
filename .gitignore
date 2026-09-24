@@ -1,0 +1,46 @@
+# Local secrets and machine-specific configuration
+benchmark/llm_config.json
+**/.env
+**/.env.*
+*.pem
+*.key
+sandbox_credentials.json
+
+# Experiment outputs and caches
+tmp/
+outputs/
+reports/
+parse_failures/
+archives/
+backups/
+*.log
+*.jsonl
+*.sqlite
+*.db
+**/runs/
+**/outputs/
+**/.cache/
+**/.uv-cache/
+**/.uv-cache-*/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
+**/__pycache__/
+**/*.pyc
+
+# Downloaded benchmark data and virtual environments
+benchmark/alfworld-eval/.data/
+benchmark/searchqa-eval/data/
+**/.venv/
+
+# Pulled research repositories are external dependencies, not vendored code
+repos/pulled/
+
+# Build artifacts and local tooling
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+.DS_Store
+.codex/
