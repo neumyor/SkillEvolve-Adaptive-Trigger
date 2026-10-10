@@ -1,7 +1,8 @@
-# TB2.1 完整评测：代码与运行手册
+# TB2.1 完整评测：自包含评测包手册
 
-在远程 node29 上，用 Tencent E2B 沙箱跑 TerminalBench 2.1 的裸 rollout（无 Skill）并统计 avg@N / pass@N。
-本目录的文件与远程 `/data2/niuyiming/scripts/` 逐字节一致（2026-10-10 核对过 sha256）。
+用 Tencent E2B 沙箱跑 TerminalBench 2.1 的裸 rollout（无 Skill）并统计 avg@N / pass@N。
+本包自 2026-10-10 起三层代码自包含（见第 1 节），可在任意腾讯 VPC 内网机器上部署运行。
+注意：远程 node29 的 `/data2/niuyiming/scripts/` 目前还是旧版（服务进行中的补跑），补跑结束后用本包替换。
 
 ## 1. 组件总览
 
@@ -50,7 +51,33 @@
 第二层代码快照里有两个 `/data2/liyishan/.../cache` 写死路径，在裸 rollout 下**不会执行**：
 `TB21_PIPELINE_CACHE`（默认 0）控制 pipeline 缓存；uv 0.9.5 归档缓存只在 skills 评测模式（`tencent_tb2_skill_env`）里用到。开着这些开关才需要 node29 上的缓存树。
 
-## 2. 怎么跑
+## 2. 怎么用
+
+### 2.0 前置条件与标准工作流
+
+前置条件（缺一不可）：
+
+1. 机器在**腾讯 VPC 内网**里（`183.60.83.19` DNS、`mirrors.tencentyun.com` 内网镜像、`ap-beijing.tencentags.com` 沙箱服务只在腾讯内网可达）；
+2. `secrets.env` 在包根目录（`E2B_API_KEY` / `E2B_DOMAIN` / `TBENCH_LLM_KEY`）；
+3. `./bootstrap.sh` 跑过一次（生成 `.venv/`，需要 python3.12）。
+
+一轮完整评测的循环：
+
+```
+生成队列 ──► source campaign.env ──► 滚动投喂 ──► 盯进度
+                                                │
+        ┌───────────────────────────────────────┘
+        ▼
+   audit_trials.py 审计 ──有缺口──► build_rerun_queue.py 生成补跑队列 ──┐
+        │                                                            │
+      无缺口◄────────────────────────────────────────────────────────┘
+        ▼
+   记录 avg@N / pass@N（只认审计后的数字）
+```
+
+队列是 TSV，每行一次独立的 trial：`run_id  model  effort  task`。
+effort 为空表示不发 `reasoning_effort`（qwen3.6-flash-distill 用默认），`max` 表示发（DEEPSEEK_up5zdj）。
+**全量跑 89 题 × N 条 = 89N 行**，每行 run_id 互不相同（如 `run_<q|d>_<task>_<n>`）；补跑队列则只含审计判定的缺口。
 
 ### 2.1 跑一批 trial（补跑或全量都用这个）
 
@@ -74,20 +101,20 @@ EOF
 ### 2.2 看进度
 
 ```bash
-kill -0 $(cat ~/niuyiming/SkillExpand-tbeval/logs/e1_fix.pid) && echo 运行中
-find /data2/niuyiming/e1_fix/jobs -mindepth 3 -maxdepth 3 -name result.json | wc -l
+kill -0 $(cat logs/e1_fix.pid) && echo 运行中        # 投喂器判活（pidfile 在日志目录）
+find <jobs_dir> -mindepth 2 -maxdepth 2 -name result.json | wc -l   # 已完成条数
 ```
 
-启动器的日志最后会打印 `ALL DONE`。
+启动器的日志最后会打印 `ALL DONE`。**判活只认 pidfile + `kill -0`，禁止 `pgrep -f`**（它会把启动它的 shell 也匹配进来，见 AGENTS.md 的事故记录）。
 
 ### 2.3 审计与出指标（每批跑完都要先审计再用数字，AGENTS.md）
 
 ```bash
-python3 /data2/niuyiming/scripts/audit_trials.py
+python3 audit_trials.py        # 结果根目录用 TBENCH_RESULTS_ROOT 覆盖（默认 node29 的 /data2/niuyiming）
 ```
 
 输出每题还缺几条、各类无效原因的计数，以及 avg@N / pass@N。逐条明细写在 `$TBENCH_RESULTS_ROOT/audit_<日期>.json`。
-脚本顶部的 `REC_GLOBS` 已包含 `e1_recover` 和 `e1_fix` 两代补跑；以后再加新一代时，在那里追加一行。
+判定规则就是第 5 节的异常处理契约。脚本顶部的 `REC_GLOBS` 已包含 `e1_recover` 和 `e1_fix` 两代补跑；以后再加新一代时，在那里追加一行。
 
 ## 3. runner 的开关（全部由环境变量控制）
 
@@ -116,18 +143,49 @@ python3 /data2/niuyiming/scripts/audit_trials.py
 
 **还没解决的**：从 GitHub 下载的部分（装 uv、uv 下载 Python 解释器、个别题的 `git clone`），这些不走 PyPI；有 5 次和下载无关的评测超时（configure-git-webserver 等），原因未知。
 
-## 5. 审计规则（看数据之前就定好的）
+## 5. 异常处理契约（看数据之前就定好的）
 
-| 判定 | 条件 | 处理 |
-|---|---|---|
-| 有效 | 有 reward，**并且**评测日志里有 pytest 的 `collected N items` | 计入 |
-| 伪 0 分 | 有 0 分，但 pytest 没有运行（装包或下载失败） | 重跑 |
-| 基础设施失败 | 没有 reward，异常属于基础设施类 | 重跑 |
-| 模型自身失败 | `AgentTimeoutError`、tmux 按键失败 | 保留，计 0 分 |
+**一句话原则：模型自己造成的失败，保留计 0 分；我们这边的环境和基础设施造成的失败，补跑。**
 
-判据的依据：89 题的 verifier 全部用 pytest；dpsk 240 条得 1 分的评测日志全部含有 `collected`。
+### 5.1 两级重跑，别混淆
 
-指标的算法：每题取前 N 条可用轨迹（原始 run 优先，然后按补跑先后），计算 avg@N（每题的成功率再对题取平均）和 pass@N（至少成功一次的题占比）。**分母固定为 89 题**；轨迹不足 N 条的题会单独列出，不会补齐。
+| 层级 | 触发 | 范围 | 在哪配置 |
+|---|---|---|---|
+| ① trial 内自动重跑 | 异常属于 `AgentSetupTimeoutError` / `SandboxException` / `AddTestsDirError` | Harbor 把整条 trial 原样重来一次 | runner 生成 job YAML（`TBENCH_MAX_TRIAL_RETRIES`，默认 1） |
+| ② 事后审计补跑 | 审计判定为伪 0 分或基础设施失败 | 只补该题缺的那几条 | `audit_trials.py` → `build_rerun_queue.py` → 重新投喂 |
+
+**评测超时（VerifierTimeoutError）不走第①级**——评测没跑完就原样重来没有意义（模型轨迹相同、评测结果必然相同），只在审计标记后按需补跑。verifier 时限已统一放宽到 7200 秒，正常情况下不应再出现。
+
+### 5.2 异常分类契约表（实测中见过的全部情况）
+
+| 异常（实测案例） | 判定 | 处理 | 为什么 |
+|---|---|---|---|
+| **tmux 按键失败**（`RuntimeError: send keys` / `tmux: command not found`） | 模型自身失败 | **保留，计 0 分，不补跑** | agent 搞坏了自己会话里的 tmux（比如把它卸载了），是模型输出直接造成的 |
+| **AgentTimeoutError**（模型用完全部时限没做完） | 模型自身失败 | 保留，计 0 分 | 模型的速度/策略问题 |
+| **ContextLengthExceeded / OutputLengthExceeded** | 模型自身失败 | 保留，计 0 分 | 同上 |
+| **GitHub 下载失败**（verifier 装 uv、uv 拉 Python 解释器时 `HTTP/2 stream not closed` / `failed to download https://github.com/...`） | 伪 0 分 | **补跑** | GitHub 不走任何内网镜像，间歇性掐断，与模型无关、与我们配置无关。同题重试往往就成功 |
+| **PyPI 包下载失败 / zip 损坏**（`Could not find EOCD` / `Invalid zip`） | 伪 0 分 | 补跑 | 下载中途断开。配内网 PyPI 镜像后基本消失 |
+| **apt 包 404**（bullseye 的 curl 已从池中下架，索引还在） | 伪 0 分 | 补跑 | 过期发行版的通病。根治靠 snapshot 源开关（第 4 节），e1_fix 里 qemu 两题已验证修复 |
+| **apt 锁冲突**（`Could not get lock`，agent 占着 apt 时 verifier 也要装包） | 伪 0 分 | 补跑 | 时序冲突，与模型无关 |
+| **uvx: command not found**（装 uv 那步失败的连锁反应） | 伪 0 分 | 补跑 | 上游失败的下游表现 |
+| **AgentSetupTimeoutError / EnvironmentStartTimeoutError**（沙箱没起来） | 基础设施失败 | 先走第①级自动重跑；仍失败则审计后补跑 | 冷启动突发/慢，滚动投喂已大幅减少 |
+| **SandboxException / AddTestsDirError / DownloadVerifierDirError / RewardFileNotFoundError** | 基础设施失败 | 同上 | 沙箱侧问题 |
+| **VerifierTimeoutError**（评测没在时限内跑完） | 基础设施失败 | 不走第①级，审计后按需补跑 | 见 5.1 |
+| **LLM 请求失败**（`model request failed` / `context deadline`） | 基础设施失败 | 补跑 | 模型服务侧的网络/限流，不算模型能力 |
+| **沙箱 RPC 失败**（`InvalidArgumentException` / `TimeoutException`） | 基础设施失败 | 补跑 | E2B 服务侧问题 |
+| **CancelledError** | 基础设施失败 | 补跑 | 我们自己手动停止补跑器时留下的 |
+| **未识别的异常** | 默认基础设施失败 | 补跑 | 宁可多补，不把环境故障算到模型头上 |
+| RUNNING（已投喂但没有 result.json） | 进行中 | 等待，不计缺口 | 审计时单独计数 |
+
+### 5.3 伪 0 分的总判据
+
+有 reward（通常是 0），**但 verifier 日志（`verifier/test-stdout.txt`）里没有 pytest 的 `collected N items`** → 评测从未真正运行，判伪 0 分，必须补跑。
+判据依据：89 题的 verifier 全部用 pytest；dpsk 全部 240 条得 1 分的评测日志都含 `collected`——它是"评测确实跑过"的可靠标志。
+
+### 5.4 指标算法（审计脚本自动执行）
+
+每题取前 N 条**有效**轨迹（原始 run 优先，然后按补跑先后），avg@N = 每题成功率再对题取平均；pass@N = 至少成功一次的题占比。
+**分母固定为 89 题**；轨迹不足 N 条的题单独列出（样本不足，不补齐也不剔除）；补跑多出的轨迹会被截断，不能抬高 pass@N。
 
 ## 6. 远程目录布局（node29，用户 xinhaidong）
 
