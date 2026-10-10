@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "reward": 1.0,
+  "trial": "/data2/liyishan/tbench2-openclaw-min/jobs/tb21_version_canary_20261001/tb21_fixgit_version_canary_20261001/fix-git__Pz8pscg",
+  "artifacts": [
+    "agent/trajectory.json",
+    "agent/raw_model_requests.jsonl",
+    "agent/raw_model_responses.jsonl",
+    "agent/recording.cast",
+    "snapshot.json"
+  ],
+  "snapshot_status": "failed"
+}

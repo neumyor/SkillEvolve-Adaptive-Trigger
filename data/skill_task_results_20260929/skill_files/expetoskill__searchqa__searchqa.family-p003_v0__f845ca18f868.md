@@ -1,0 +1,8 @@
+1. Identify the target entity using standard search and document retrieval. Ensure the factual core of the answer is correct before worrying about format.
+2. Upon rejection, analyze the failed submission for common morphological or canonical mismatches:
+   a. Singular/Plural: If the question uses plural indicators ('these', 'ranks') or implies multiple items, try the plural form. Conversely, if the question asks for a specific title or unique identifier, try the singular.
+   b. Nickname vs. Formal Name: If a common nickname (e.g., 'Stu', 'Patty', 'Boss') fails, submit the full legal or formal name (e.g., 'Stuart', 'Patricia', 'Boss Tweed').
+   c. Suffix Handling: If a proper noun includes a generic descriptor (e.g., 'Bull Moose Party', 'Adirondack Mountains', 'Forbes Magazine') and fails, try stripping the descriptor (e.g., 'Bull Moose', 'Adirondacks', 'Forbes'). Conversely, if the short form fails, try adding the descriptor.
+   d. Canonical/Formal Names: For countries or organizations, if the common short name (e.g., 'China') fails, try the official long-form name (e.g., 'People's Republic of China').
+3. Prioritize the most likely variant based on the question's phrasing (e.g., 'moniker' suggests a shorter or specific title; 'alliance of businesses' might require the business type rather than the organization name).
+4. Submit the refined answer. Do not invent new entities to explain rejection; assume the original entity identification was correct but the string representation was non-standard.

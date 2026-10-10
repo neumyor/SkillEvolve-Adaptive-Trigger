@@ -1,0 +1,23 @@
+1. Identify if the question seeks a specific entity, phrase, or term likely contained within a quiz/flashcard dataset (e.g., Jeopardy clues, StudyStack cards).
+2. Construct search queries using key phrases from the question, proper nouns, or specific terms.
+3. Execute Search actions to retrieve up to three matching documents. Prioritize results that appear to be direct Q&A pairs or flashcards.
+4. If initial searches yield no direct match, refine queries by including context keywords (e.g., location, year, profession) or exact phrasing of the clue.
+5. For riddles or puns, combine role/activity keywords (e.g., 'bouncer bad check') to find semantic connections in the database.
+6. For lyrics or quotes, search for exact phrases or song titles associated with the fragment.
+7. Verify the candidate answer against the retrieved document's context to ensure it matches the specific question format and exact string (including singular/plural distinctions) found in the source text.
+8. Submit the minimal complete answer string using Finish. Do not expand titles or add explanations unless required by the specific question format.
+9. Avoid relying on general knowledge inference; prioritize exact textual matches in the supplied documents over logical deduction if the latter yields ambiguous results.
+10. If multiple documents provide conflicting answers, prefer the one that most closely mirrors the question's phrasing or structure.
+11. When the task text contains a seasonal reference linked to a specific entity or item, search for the entity and item to identify the associated season from context clues in search results.
+12. To identify a Shakespeare title modified by a specific film or short, search for the modification details (e.g., 'Three Stooges 1958 short Oil Shakespeare') to find the episode title, then map it back to the original work.
+13. When identifying a folklore figure from a specific literary quote, search for the exact quote to find associated metadata or tags in blog posts or trivia databases.
+14. To answer questions about specific jokes or punchlines, search for the specific phrase describing the joke scenario to retrieve the correct punchline.
+15. When the query involves a specific entity's attribute (e.g., 'largest water-filled hole'), search for the exact phrase or key descriptors associated with that entity to find the defining category, then use Lookup on that category if the answer is not immediately explicit in the snippet.
+16. Do not assume the answer is a generic type like 'swimming hole' based on general lists of attractions; verify against specific factual descriptions of the entity's unique characteristics.
+17. When identifying a military figure based on specific awards (Silver/Bronze Stars) and service theaters (Vietnam, NATO/Yugoslavia), search for the combination of these keywords to locate trivia or biographical sources that explicitly link the person to the question text.
+18. Do not assume a single search query will yield the answer; if initial results are ambiguous or generic, refine the search by including specific context from the question (e.g., 'Jeopardy', 'Democratic Presidential Contenders') to find exact matches in known datasets.
+19. To answer riddles identifying a school subject via its muse, search for the specific muse's name to confirm the associated discipline.
+20. When the task involves a specific trivia fact (e.g., 'Over 3 dozen mountains...'), prioritize searching for the exact phrase or question text in quotation marks to find direct matches in quiz archives or flashcard databases, rather than relying solely on general geographic verification.
+21. Do not submit a candidate answer based on partial geographic inference (e.g., identifying a range with many high peaks) if the specific trivia condition ('over 3 dozen') has not been explicitly verified by a source matching the query phrasing; incorrect submissions result from assuming the identified range is the unique answer without textual confirmation.
+22. When solving Jeopardy-style trivia where the clue contains specific phrasing (e.g., 'OO, SORRY YOU'RE POOR'), search for that exact phrase or the full clue text to locate the answer key directly, rather than searching for general definitions of the terms involved.
+23. If broad searches for specific terms (e.g., slang, idioms) return generic dictionary definitions or unrelated lists, refine the query by appending known dataset identifiers (e.g., 'Jeopardy', 'Quiz', 'Flashcards') or source-specific keywords to isolate the target trivia source.

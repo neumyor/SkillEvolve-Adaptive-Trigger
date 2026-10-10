@@ -1,0 +1,144 @@
+{
+  "papers": [
+    {
+      "paper_id": "skillevo_self_renewing_evolution_gradients_from_multi_turn_interaction_feedback",
+      "title": "SKILLEVO: SELF-RENEWING EVOLUTION GRADIENTS FROM MULTI-TURN INTERACTION FEEDBACK",
+      "file": "papers/skillevo_self_renewing_evolution_gradients_from_multi_turn_interaction_feedback.pdf"
+    },
+    {
+      "paper_id": "skillevolver_skill_learning_as_a_meta_skill",
+      "title": "SKILLEVOLVER: SKILL LEARNING AS A META-SKILL",
+      "file": "papers/skillevolver_skill_learning_as_a_meta_skill.pdf"
+    },
+    {
+      "paper_id": "coevoskills_self_evolving_agent_skills_via_co_evolutionary_verification",
+      "title": "CoEvoSkills: Self-Evolving Agent Skills via Co-Evolutionary Verification",
+      "file": "papers/coevoskills_self_evolving_agent_skills_via_co_evolutionary_verification.pdf"
+    },
+    {
+      "paper_id": "skillcat_contrastive_assessment_and_topology_aware_skill_self_evolution_for_llm",
+      "title": "SkillCAT: Contrastive Assessment and Topology-Aware Skill Self-Evolution for LLM Agents",
+      "file": "papers/skillcat_contrastive_assessment_and_topology_aware_skill_self_evolution_for_llm_agents.pdf"
+    },
+    {
+      "paper_id": "skillpyramid_a_hierarchical_skill_consolidation_framework_for_self_evolving_agen",
+      "title": "SKILLPYRAMID: A Hierarchical Skill Consolidation Framework for Self-Evolving Agents",
+      "file": "papers/skillpyramid_a_hierarchical_skill_consolidation_framework_for_self_evolving_agents.pdf"
+    },
+    {
+      "paper_id": "skillrl_evolving_agents_via_recursive_skill_augmented_reinforcement_learning",
+      "title": "SKILLRL: Evolving Agents via Recursive Skill-Augmented Reinforcement Learning",
+      "file": "papers/skillrl_evolving_agents_via_recursive_skill_augmented_reinforcement_learning.pdf"
+    },
+    {
+      "paper_id": "metaskill_evolve_recursive_self_improvement_of_llm_agents_via_two_timescale_meta",
+      "title": "MetaSkill-Evolve: Recursive Self-Improvement of LLM Agents via Two-Timescale Meta-Skill Evolution",
+      "file": "papers/metaskill_evolve_recursive_self_improvement_of_llm_agents_via_two_timescale_meta_skill_evolution.pdf"
+    },
+    {
+      "paper_id": "evoskill_automated_skill_discovery_for_multi_agent_systems",
+      "title": "EvoSkill: Automated Skill Discovery for Multi-Agent Systems",
+      "file": "papers/evoskill_automated_skill_discovery_for_multi_agent_systems.pdf"
+    },
+    {
+      "paper_id": "wikiskill_compiling_agent_experience_into_persistent_knowledge_for_skill_evoluti",
+      "title": "WikiSkill: Compiling Agent Experience into Persistent Knowledge for Skill Evolution",
+      "file": "papers/wikiskill_compiling_agent_experience_into_persistent_knowledge_for_skill_evolution.pdf"
+    },
+    {
+      "paper_id": "skillopt_executive_strategy_for_self_evolving_agent_skills",
+      "title": "SKILLOPT: Executive Strategy for Self-Evolving Agent Skills",
+      "file": "papers/skillopt_executive_strategy_for_self_evolving_agent_skills.pdf"
+    },
+    {
+      "paper_id": "skilladaptor_self_adapting_skills_for_llm_agents_from_trajectories",
+      "title": "SkillAdaptor: Self-Adapting Skills for LLM Agents from Trajectories",
+      "file": "papers/skilladaptor_self_adapting_skills_for_llm_agents_from_trajectories.pdf"
+    },
+    {
+      "paper_id": "who_grades_the_grader_co_evolving_evaluation_metrics_and_skills_for_self_improvi",
+      "title": "Who Grades the Grader? Co-Evolving Evaluation Metrics and Skills for Self-Improving LLM Agents",
+      "file": "papers/who_grades_the_grader_co_evolving_evaluation_metrics_and_skills_for_self_improving_llm_agents.pdf"
+    },
+    {
+      "paper_id": "trace2skill_distill_trajectory_local_lessons_into_transferable_agent_skills",
+      "title": "Trace2Skill: Distill Trajectory-Local Lessons into Transferable Agent Skills",
+      "file": "papers/trace2skill_distill_trajectory_local_lessons_into_transferable_agent_skills.pdf"
+    },
+    {
+      "paper_id": "skillgen_verified_inference_time_agent_skill_synthesis",
+      "title": "SKILLGEN: Verified Inference-Time Agent Skill Synthesis",
+      "file": "papers/skillgen_verified_inference_time_agent_skill_synthesis.pdf"
+    },
+    {
+      "paper_id": "skillx_automatically_constructing_skill_knowledge_bases_for_agents",
+      "title": "SkillX: Automatically Constructing Skill Knowledge Bases for Agents",
+      "file": "papers/skillx_automatically_constructing_skill_knowledge_bases_for_agents.pdf"
+    },
+    {
+      "paper_id": "skillweaver_web_agents_can_self_improve_by_discovering_and_honing_skills",
+      "title": "SkillWeaver: Web Agents can Self-Improve by Discovering and Honing Skills",
+      "file": "papers/skillweaver_web_agents_can_self_improve_by_discovering_and_honing_skills.pdf"
+    },
+    {
+      "paper_id": "gepa_reflective_prompt_evolution_can_outperform_reinforcement_learning",
+      "title": "GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning",
+      "file": "papers/gepa_reflective_prompt_evolution_can_outperform_reinforcement_learning.pdf"
+    },
+    {
+      "paper_id": "skill0_in_context_agentic_reinforcement_learning_for_skill_internalization",
+      "title": "SKILL0: In-Context Agentic Reinforcement Learning for Skill Internalization",
+      "file": "papers/skill0_in_context_agentic_reinforcement_learning_for_skill_internalization.pdf"
+    },
+    {
+      "paper_id": "skillhone_a_harness_for_continual_agent_skill_evolution_through_persistent_decision_history",
+      "title": "SkillHone: A Harness for Continual Agent Skill Evolution Through Persistent Decision History",
+      "file": "papers/skillhone_a_harness_for_continual_agent_skill_evolution_through_persistent_decision_history.pdf"
+    },
+    {
+      "paper_id": "skillreducer_optimizing_llm_agent_skills_for_token_efficiency",
+      "title": "SkillReducer: Optimizing LLM Agent Skills for Token Efficiency",
+      "file": "papers/skillreducer_optimizing_llm_agent_skills_for_token_efficiency.pdf"
+    },
+    {
+      "paper_id": "skvm_revisiting_language_vm_for_skills_across_heterogenous_llms_and_harnesses",
+      "title": "SkVM: Revisiting Language VM for Skills across Heterogenous LLMs and Harnesses",
+      "file": "papers/skvm_revisiting_language_vm_for_skills_across_heterogenous_llms_and_harnesses.pdf"
+    },
+    {
+      "paper_id": "cafe_self_improving_search_agents_need_co_evolving_feedback",
+      "title": "CAFE: Self-Improving Search Agents Need Co-Evolving Feedback",
+      "file": "papers/cafe_self_improving_search_agents_need_co_evolving_feedback.pdf"
+    },
+    {
+      "paper_id": "skill_use_can_llms_actually_use_skills_in_agentic_harnesses",
+      "title": "SKILL-USE: Can LLMs Actually Use Skills in Agentic Harnesses?",
+      "file": "papers/skill_use_can_llms_actually_use_skills_in_agentic_harnesses.pdf"
+    },
+    {
+      "paper_id": "agent_skills_can_be_harmful_an_empirical_study_of_skill_induced_failures_in_llm",
+      "title": "Agent Skills Can Be Harmful: An Empirical Study of Skill-Induced Failures in LLM Agents",
+      "file": "papers/agent_skills_can_be_harmful_an_empirical_study_of_skill_induced_failures_in_llm_agents.pdf"
+    },
+    {
+      "paper_id": "rethinking_self_evolving_agent_skills_feedback_dynamics_over_multiple_rounds",
+      "title": "Rethinking Self-Evolving Agent Skills: Feedback Dynamics over Multiple Rounds",
+      "file": "papers/rethinking_self_evolving_agent_skills_feedback_dynamics_over_multiple_rounds.pdf"
+    },
+    {
+      "paper_id": "recuris_recursive_experiential_working_memory_evolution_for_long_horizon_agent",
+      "title": "Recuris: Recursive Experiential-Working Memory Evolution for Long-Horizon Agent Harnesses",
+      "file": "papers/recuris_recursive_experiential_working_memory_evolution_for_long_horizon_agent_harnesses.pdf"
+    },
+    {
+      "paper_id": "skillhex_improving_agent_skills_via_hypothesis_driven_autonomous_exploration_and",
+      "title": "SkillHEX: Improving Agent Skills via Hypothesis-Driven Autonomous Exploration and Exploitation",
+      "file": "papers/skillhex_improving_agent_skills_via_hypothesis_driven_autonomous_exploration_and_exploitation.pdf"
+    },
+    {
+      "paper_id": "skill-kd_contrastive_skill_distillation_for_llm_agents",
+      "title": "SKILL-KD: Contrastive Skill Distillation for LLM Agents",
+      "file": "papers/skill-kd_contrastive_skill_distillation_for_llm_agents.pdf"
+    }
+  ]
+}

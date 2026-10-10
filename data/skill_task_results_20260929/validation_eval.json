@@ -1,0 +1,15 @@
+{
+  "items": 2,
+  "baseline_scores": [
+    0.0,
+    0.0
+  ],
+  "best_scores": [
+    0.0,
+    0.0
+  ],
+  "baseline_mean": 0.0,
+  "best_mean": 0.0,
+  "audit_enabled": false,
+  "evaluation_kind": "final_split_measurement"
+}

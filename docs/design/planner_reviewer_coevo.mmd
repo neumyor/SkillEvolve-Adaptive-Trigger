@@ -1,0 +1,34 @@
+flowchart LR
+  CARDS["train 经验卡<br/>本轮新产生"]
+  SKILL[("Skill 库<br/>当前 head")]
+
+  subgraph PL["Planner（每轮更新）"]
+    PM["Planner 记忆：提案历史<br/>每个改动的真实结论：有效 · 无效 · 证据不足<br/>声明兑现：触发 n / N · 符合声明 n / N<br/>Reviewer 预测 vs 真实 Δ<br/>（只到改动这一层，不含 val 题目）"]
+    PA["提议<br/>结构化改动 + 声明"]
+  end
+
+  subgraph RV["Reviewer（每轮更新）"]
+    RM["Reviewer 记忆：错判案例库（含 val 题目）<br/>高估：看似有用，实则无用<br/>低估：看似无用，实则有用<br/>每例附判定结论"]
+    RA["逐题预测 Δ<br/>（读当前 Skill）"]
+  end
+
+  ENV["真实环境：val 随机抽检<br/>旧 / 新 Skill 各跑一次<br/>固定随机性"]
+  JUDGE["独立判定者（冻结 · 不看成绩）<br/>输入：规则 + 声明 + 首个差异片段"]
+  DEC{"决策<br/>抽检修正后<br/>置信下界 > 0 才接受<br/>（只看真实 Δ）"}
+  LEDGER[("共享账本<br/>每个改动 × 每道抽检题一行")]
+
+  CARDS --> PA
+  SKILL --> PA
+  PM --> PA
+  RM --> RA
+  PA -- "结构化改动 + 声明（触发条件 + 动作变化）" --> RA
+  PA -- "改动" --> ENV
+  RA -- "预测 Δ" --> DEC
+  ENV -- "真实 Δ" --> DEC
+  ENV -- "首个差异片段（有差异时）" --> JUDGE
+  DEC -- "接受" --> SKILL
+
+  JUDGE -. "与规则无关 / 符合声明 / 不符合声明 / 无法判断" .-> LEDGER
+  DEC -. "声明 / 预测 / 真实 Δ" .-> LEDGER
+  LEDGER -- "按改动汇总 · 去掉 val 题目（每轮）" --> PM
+  LEDGER -- "完整案例（每轮）" --> RM

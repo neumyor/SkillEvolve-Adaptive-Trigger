@@ -1,0 +1,7 @@
+1. **Identify Source and Target**: Locate the specific object to be moved and its current location (source), and identify the required destination (target receptacle).
+2. **Navigate to Source**: Use `go to <source>` to reach the location containing the object.
+3. **Access Container if Necessary**: If the object is inside a closed container (e.g., drawer, cabinet), use `open <container>` before attempting to take the item.
+4. **Retrieve Object**: Use `take <object> from <source>` to pick up the item. If the source is an open container and `take` fails with "Nothing happens", execute `look` to adjust orientation towards the target object inside the container, then retry `take`. Ensure you are facing or adjacent to the source; if `take` fails with "Nothing happens" for non-container sources, try `look` to adjust orientation or verify the object is visible in the observation.
+5. **Navigate to Target**: Use `go to <target>` to move to the destination receptacle.
+6. **Place Object**: Use `move <object> to <target>` to place the item. Do not use `put`; evidence shows `put` consistently fails with "Nothing happens" for all target types in this environment.
+7. **Verify Completion**: The task is complete only upon receiving "Task is SOLVED." Do not assume success based on visual presence of the object in the target's observation text.

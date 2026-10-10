@@ -1,0 +1,991 @@
+{
+  "audit_version": "v0.5",
+  "audit_date": "2026-09-07",
+  "scope": {
+    "pdf_directory": "papers/",
+    "pdf_count": 21,
+    "manifest_entries_before_audit": 16,
+    "note": "All mappings below were checked against the local PDF body. E3 labels are survey conventions, not quotations or definitions attributed to the paper authors."
+  },
+  "evidence_levels": {
+    "E1": "Explicitly stated in the PDF.",
+    "E2": "Supported by the reported method or experimental design, but not stated in exactly this survey terminology.",
+    "E3": "Survey-level normalization introduced to compare heterogeneous papers.",
+    "E4": "Not reported clearly enough in the PDF to verify."
+  },
+  "papers": [
+    {
+      "paper": "CoEvoSkills",
+      "pdf": "papers/coevoskills_self_evolving_agent_skills_via_co_evolutionary_verification.pdf",
+      "normalized_target": "SP→SU + EV",
+      "carrier": "multi-file package",
+      "update_operator": [
+        "create",
+        "co-evolve verifier"
+      ],
+      "generalization": [
+        "held-out task",
+        "cross-model",
+        "cross-harness"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "deterministic verifier",
+        "opaque oracle pass/fail"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-4",
+          "claim": "The paper distinguishes a tool as a self-contained function and a skill as a structured multi-file package, and co-evolves a skill generator with a surrogate verifier."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.7-8",
+          "claim": "SkillsBench contains 85 tasks and the ground-truth oracle is exposed as an opaque pass/fail signal rather than test content."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.11-12",
+          "claim": "The evolved package is evaluated with Claude Code and Codex, including portability experiments."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SP→SU + EV is a normalization of the paper's multi-file skill-package and verifier co-evolution, not the authors' ontology."
+        }
+      ],
+      "claim_boundary": "Supports package generation, verification and portability. It does not by itself establish skill-collection scaling or retrieval quality."
+    },
+    {
+      "paper": "EvoSkill",
+      "pdf": "papers/evoskill_automated_skill_discovery_for_multi_agent_systems.pdf",
+      "normalized_target": "SU/SC",
+      "carrier": "structured skill folders",
+      "update_operator": [
+        "discover",
+        "refine",
+        "accumulate",
+        "select"
+      ],
+      "generalization": [
+        "held-out within benchmark",
+        "SealQA→BrowseComp"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "execution trace",
+        "ground-truth answer",
+        "validation score"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-2",
+          "claim": "The model remains frozen while structured reusable skill folders are proposed, refined and accumulated."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.3-4",
+          "claim": "Failure diagnosis can compare the agent answer with the ground-truth answer, and train, validation and held-out test subsets are disjoint."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.7-10",
+          "claim": "The paper reports zero-shot transfer from SealQA skills to BrowseComp."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SU/SC separates the individual generated folder from the accumulated repository; the paper does not use this ontology."
+        }
+      ],
+      "claim_boundary": "Comparable to frozen external-skill methods only when ground-truth diagnosis and validation-query budgets are matched."
+    },
+    {
+      "paper": "GEPA",
+      "pdf": "papers/gepa_reflective_prompt_evolution_can_outperform_reinforcement_learning.pdf",
+      "normalized_target": "Prompt/Program",
+      "carrier": "text prompts and compound-system program components",
+      "update_operator": [
+        "reflective optimize",
+        "Pareto select"
+      ],
+      "generalization": [
+        "train/validation/test task generalization"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "textual execution feedback",
+        "validation score"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-5",
+          "claim": "GEPA is introduced as a reflective prompt optimizer and compared with prompt optimization and reinforcement-learning baselines."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.4, 8-9",
+          "claim": "Training text and labels are available to the optimizer, while validation access is restricted to evaluation signals under the stated protocol."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.8-16",
+          "claim": "Experiments include AIME, LiveBench-Math, HotpotQA, IFBench, HoVer and PUPA, with comparisons including GRPO, MIPROv2 and TextGrad."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "Prompt/Program is kept as a separate track because the primary optimized state is not an external skill collection."
+        }
+      ],
+      "claim_boundary": "A relevant optimization baseline, but not a direct member of an external skill-acquisition leaderboard."
+    },
+    {
+      "paper": "MetaSkill-Evolve",
+      "pdf": "papers/metaskill_evolve_recursive_self_improvement_of_llm_agents_via_two_timescale_meta_skill_evolution.pdf",
+      "normalized_target": "SU + meta-SU/process",
+      "carrier": "task skill plus meta-skill components",
+      "update_operator": [
+        "fast task-skill update",
+        "slow meta-skill update"
+      ],
+      "generalization": [
+        "held-out within benchmark"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "task trajectories",
+        "held-out evaluation"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-2",
+          "claim": "The method separates task-skill evolution from meta-skill evolution and uses a shared frozen backbone."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.4-9",
+          "claim": "Task skills are updated on a fast timescale and Analyzer, Retriever, Allocator, Proposer and Evolver behavior is updated on a slow timescale."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.6-10",
+          "claim": "OfficeQA, SealQA and ALFWorld are evaluated on held-out splits."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "meta-SU/process records that the meta components are both reusable procedural controllers and part of the evolution algorithm."
+        }
+      ],
+      "claim_boundary": "Extra meta-agent calls and two-timescale update opportunities must be counted before comparison with single-level skill rewriting."
+    },
+    {
+      "paper": "SKILL0",
+      "pdf": "papers/skill0_in_context_agentic_reinforcement_learning_for_skill_internalization.pdf",
+      "normalized_target": "PP",
+      "carrier": "model parameters with temporary skill context",
+      "update_operator": [
+        "reinforcement learning",
+        "skill-context withdrawal",
+        "internalize"
+      ],
+      "generalization": [
+        "within environment",
+        "search-QA in-domain/OOD"
+      ],
+      "parameter_update": true,
+      "feedback": [
+        "reinforcement-learning reward"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "The stated goal is to internalize structured skill packages into the model and progressively withdraw skill context during training."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.5-9",
+          "claim": "Experiments cover ALFWorld, search-based QA and WebShop and update model parameters."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.6, 18-19",
+          "claim": "Search QA distinguishes in-domain datasets from out-of-domain datasets."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "PP denotes parameter/policy state and prevents the named SkillBank from being treated as a separate ontology."
+        }
+      ],
+      "claim_boundary": "Must be evaluated as skill-assisted parameter learning, not directly ranked against frozen external-skill methods."
+    },
+    {
+      "paper": "SkillAdaptor",
+      "pdf": "papers/skilladaptor_self_adapting_skills_for_llm_agents_from_trajectories.pdf",
+      "normalized_target": "SU/SC",
+      "carrier": "external skill collection",
+      "update_operator": [
+        "localize fault",
+        "attribute responsibility",
+        "locally revise",
+        "qualify"
+      ],
+      "generalization": [
+        "local repair",
+        "continual maintenance"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "failed trajectory",
+        "task score"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-4",
+          "claim": "The base model is frozen and the method localizes the first actionable failure step before attributing responsibility to candidate skills."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.3-9",
+          "claim": "Evaluation uses WebShop, PinchBench and Claw-Eval, including the OpenClaw runtime."
+        },
+        {
+          "level": "E2",
+          "location": "PDF method and experiments, pp.2-9",
+          "claim": "The main intervention is local maintenance of an existing skill collection rather than unconstrained construction from scratch."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SU/SC records that individual skills are revised inside a maintained collection."
+        }
+      ],
+      "claim_boundary": "Tool schema and harness must be fixed; results do not isolate skill discovery from repair."
+    },
+    {
+      "paper": "SkillCAT",
+      "pdf": "papers/skillcat_contrastive_assessment_and_topology_aware_skill_self_evolution_for_llm_agents.pdf",
+      "normalized_target": "SU + SC",
+      "carrier": "skill patches and routable topology",
+      "update_operator": [
+        "contrastive extract",
+        "assess",
+        "merge",
+        "route"
+      ],
+      "generalization": [
+        "held-out within dataset",
+        "OOD dataset",
+        "cross-model"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "successful/failed trajectories",
+        "patch assessment",
+        "runtime validation"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "The pipeline has Contrastive Causal Extraction, Assessment-Augmented Evolution and Topology-Aware Task Execution stages."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.5",
+          "claim": "SpreadsheetBench-Verified is split into 200 evolution and 200 held-out samples; DocVQA uses a disjoint evolution/evaluation partition."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.5-7",
+          "claim": "The paper reports WikiTableQuestions OOD and cross-model evaluations."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SU + SC separates patch quality from collection topology and routing."
+        }
+      ],
+      "claim_boundary": "Final score is composite evidence; extraction, assessment and routing gains require separate ablations for method-level comparison."
+    },
+    {
+      "paper": "SkillEvo",
+      "pdf": "papers/skillevo_self_renewing_evolution_gradients_from_multi_turn_interaction_feedback.pdf",
+      "normalized_target": "SU/SC + W",
+      "carrier": "multi-file directed graph with routing table, references and history",
+      "update_operator": [
+        "continual revise",
+        "govern",
+        "regression-check"
+      ],
+      "generalization": [
+        "chronological held-out tickets",
+        "continual interaction"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "multi-turn user simulation",
+        "fact and structure checks"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF p.3",
+          "claim": "The paper explicitly models a skill as a multi-file directed graph of a routing table and references."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.6-9",
+          "claim": "The production setting contains six cloud-service categories, nine production skills and 98 skill-reference files; tickets are chronologically partitioned into four subsets."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.4-8",
+          "claim": "Evolution uses multi-turn user simulation and reports fact consistency, structural consistency, regression and bloat controls."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "W denotes persistent interaction and governance history; it is not claimed as a raw-memory benchmark by the authors."
+        }
+      ],
+      "claim_boundary": "A continual governance setting with proprietary production data; it is not directly comparable to single-turn public-benchmark rewriting."
+    },
+    {
+      "paper": "SkillEvolver",
+      "pdf": "papers/skillevolver_skill_learning_as_a_meta_skill.pdf",
+      "normalized_target": "SU",
+      "carrier": "task/domain skill containing prose, scripts and references",
+      "update_operator": [
+        "on-demand author",
+        "refine",
+        "audit"
+      ],
+      "generalization": [
+        "task-level held-out",
+        "domain-level transfer"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "training trials",
+        "validation trials"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-4",
+          "claim": "The output is a reusable skill artifact authored through a meta-skill in a CLI-agent interface without model-weight retraining."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.6-9",
+          "claim": "SkillsBench uses an 83-task subset across professional domains, while KernelBench contains three GPU-kernel optimization tasks."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.8, 14-17",
+          "claim": "The protocol reports bounded exploration and validation trials and separates training variants from validation artifacts."
+        },
+        {
+          "level": "E4",
+          "location": "PDF KernelBench experiment",
+          "claim": "No non-SkillEvolver baseline is reported for the KernelBench cell."
+        }
+      ],
+      "claim_boundary": "SkillsBench and KernelBench are separate cells with different metrics and baseline coverage; they cannot be collapsed into one performance number."
+    },
+    {
+      "paper": "SKILLGEN",
+      "pdf": "papers/skillgen_verified_inference_time_agent_skill_synthesis.pdf",
+      "normalized_target": "SU",
+      "carrier": "single auditable skill artifact",
+      "update_operator": [
+        "contrastive synthesize",
+        "paired verify",
+        "refine",
+        "deprecate"
+      ],
+      "generalization": [
+        "same-instance intervention",
+        "ALFWorld IOD/OOD",
+        "cross-benchmark"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "successful/failed trajectories",
+        "paired with/without-skill outcomes"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-6",
+          "claim": "A single auditable skill is synthesized from successful and failed trajectories and evaluated through paired with-skill/without-skill intervention."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.16",
+          "claim": "ALFWorld valid_seen is treated as IOD with overlapping task types, while valid_unseen is treated as OOD with novel task types."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.6-9, 14-19",
+          "claim": "The protocol separates construction verification from held-out testing and can deprecate a rejected or harmful skill."
+        },
+        {
+          "level": "E2",
+          "location": "PDF experiments",
+          "claim": "Accepted candidates can still create held-out regressions, so repair and regression must be reported separately."
+        }
+      ],
+      "claim_boundary": "IOD and OOD cells support different strengths of generalization claim."
+    },
+    {
+      "paper": "SkillHone",
+      "pdf": "papers/skillhone_a_harness_for_continual_agent_skill_evolution_through_persistent_decision_history.pdf",
+      "normalized_target": "SU/SC + W",
+      "carrier": "loadable skill bundle plus persistent decision history",
+      "update_operator": [
+        "continual diagnose",
+        "propose",
+        "evaluate",
+        "retain history"
+      ],
+      "generalization": [
+        "cross-session",
+        "open-web setting transfer"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "evaluation reports",
+        "probes",
+        "validators",
+        "regressions"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "The paper treats skills as loadable bundles of procedures, scripts, references and output conventions and adds persistent decision history."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.4-6",
+          "claim": "Evaluation uses GAIA validation and WebWalkerQA-EN; development uses 20 disjoint WebShaper items."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.4-6",
+          "claim": "Curated-search and raw-open-web settings use different search stacks, while raw-open-web systems share a portable skill-bundle interface."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SU/SC + W separates the loadable bundle, any collection behavior and the decision-history state."
+        }
+      ],
+      "claim_boundary": "Search stack and controller/executor configuration are major confounders; cross-setting scores are not clean skill-only comparisons."
+    },
+    {
+      "paper": "SkillOpt",
+      "pdf": "papers/skillopt_executive_strategy_for_self_evolving_agent_skills.pdf",
+      "normalized_target": "SU",
+      "carrier": "single natural-language skill document",
+      "update_operator": [
+        "bounded rewrite",
+        "validation gate",
+        "slow meta update"
+      ],
+      "generalization": [
+        "benchmark-held-out",
+        "cross-model",
+        "cross-harness",
+        "nearby benchmark"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "scored rollouts",
+        "held-out selection score"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "A frozen target agent is adapted by bounded add/delete/replace edits to a single skill document, accepted through a held-out gate."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.3, 10-16",
+          "claim": "The evaluation spans six benchmarks, seven target models and three execution modes."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.5-7",
+          "claim": "Train, selection and test splits have distinct roles and the test split is used only for final reporting."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.10-16",
+          "claim": "Cross-model, cross-harness and cross-benchmark transfer are reported as separate experiments."
+        }
+      ],
+      "claim_boundary": "The six benchmarks are heterogeneous evaluation cells, not samples from one homogeneous task distribution."
+    },
+    {
+      "paper": "SkillPyramid",
+      "pdf": "papers/skillpyramid_a_hierarchical_skill_consolidation_framework_for_self_evolving_agents.pdf",
+      "normalized_target": "SC",
+      "carrier": "hierarchical skill library",
+      "update_operator": [
+        "consolidate",
+        "extract atomic units",
+        "induce abstractions",
+        "retrieve"
+      ],
+      "generalization": [
+        "environment-internal seen→unseen",
+        "multi-environment breadth"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "task trajectories",
+        "environment success"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-4",
+          "claim": "The primary output is a hierarchical skill library with topology, atomic extraction and abstract induction."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.10",
+          "claim": "ALFWorld uses 140 seen and 134 unseen tasks; ScienceWorld uses 194 seen and 211 unseen variations across 24 task types."
+        },
+        {
+          "level": "E1",
+          "location": "PDF experiments and appendix",
+          "claim": "The library is constructed from training splits and no model fine-tuning is part of the stated method."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SC captures the collection-level objective; hierarchical and topology-aware are attributes rather than separate ontologies."
+        }
+      ],
+      "claim_boundary": "Supports collection organization and environment-internal transfer. Multi-environment evaluation is not automatically cross-environment transfer unless the same learned collection crosses environments."
+    },
+    {
+      "paper": "SkillReducer",
+      "pdf": "papers/skillreducer_optimizing_llm_agent_skills_for_token_efficiency.pdf",
+      "normalized_target": "SU/SC compression",
+      "carrier": "routing descriptions and skill bodies",
+      "update_operator": [
+        "compress",
+        "progressively disclose"
+      ],
+      "generalization": [
+        "cross-model",
+        "cross-framework functional retention"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "functional evaluation",
+        "token and latency measurements"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "The paper studies 55,315 public skills and defines skills as pre-packaged instruction sets."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.5-10",
+          "claim": "Controlled evaluation covers 600 skills and compares no-skill, original-skill and compressed-skill conditions."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.8-12",
+          "claim": "SkillsBench evaluation covers 87 tasks, and transfer is tested across five models from four families and another agent framework."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "The primary track is compression/retention, even though the artifacts being compressed can be individual skills or collections."
+        }
+      ],
+      "claim_boundary": "Primary outcomes are token reduction, functional retention and runtime cost, not skill discovery quality."
+    },
+    {
+      "paper": "SKILLRL",
+      "pdf": "papers/skillrl_evolving_agents_via_recursive_skill_augmented_reinforcement_learning.pdf",
+      "normalized_target": "SC + PP",
+      "carrier": "hierarchical SKILLBANK and policy weights",
+      "update_operator": [
+        "distill",
+        "expand/refine bank",
+        "SFT/RL policy update"
+      ],
+      "generalization": [
+        "within-environment task types",
+        "search-QA in-domain/OOD"
+      ],
+      "parameter_update": true,
+      "feedback": [
+        "trajectory outcomes",
+        "reinforcement-learning reward"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-4",
+          "claim": "The method co-evolves a hierarchical skill bank containing general and task-specific skills with an updated policy."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.6-7, 10-14",
+          "claim": "Evaluation covers ALFWorld, WebShop and seven search-QA datasets; the reported bank grows from 55 to 100 skills."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.7, 13",
+          "claim": "ALFWorld general skills are intended to apply across task types within the environment, while search QA distinguishes in-domain and OOD datasets."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SC + PP makes both collection growth and policy learning explicit."
+        }
+      ],
+      "claim_boundary": "Cannot be directly ranked against frozen external collections without isolating policy-update compute and inference context."
+    },
+    {
+      "paper": "SkillWeaver",
+      "pdf": "papers/skillweaver_web_agents_can_self_improve_by_discovering_and_honing_skills.pdf",
+      "normalized_target": "SC of executable skills/APIs",
+      "carrier": "executable APIs with tests",
+      "update_operator": [
+        "website explore",
+        "synthesize API",
+        "test",
+        "debug",
+        "expand"
+      ],
+      "generalization": [
+        "within website",
+        "cross-website",
+        "simulated→real web"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "automated functional checks",
+        "human success judgment"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "The method synthesizes robust reusable APIs from website exploration and maintains a growing API library."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.5",
+          "claim": "WebArena has 812 tasks across five application domains; Online-Mind2Web has 300 tasks across 136 websites, while the reported online subset uses four websites and 57 tasks."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.5-6",
+          "claim": "WebArena uses automated functional correctness while real-website success is manually judged."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "The artifacts are labeled executable skills/APIs because their role spans both procedural skill and generated tool interface."
+        }
+      ],
+      "claim_boundary": "WebArena and real-website results use different evaluators and must remain separate cells."
+    },
+    {
+      "paper": "SkillX",
+      "pdf": "papers/skillx_automatically_constructing_skill_knowledge_bases_for_agents.pdf",
+      "normalized_target": "SC + KB",
+      "carrier": "three-level procedural/declarative knowledge base",
+      "update_operator": [
+        "construct",
+        "retrieve",
+        "compose"
+      ],
+      "generalization": [
+        "within benchmark held-out",
+        "cross-model user",
+        "cross-tool schema/environment"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "generated experience",
+        "benchmark evaluator"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "SkillX constructs a plug-and-play knowledge base with planning, functional and atomic skill levels."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.5",
+          "claim": "BFCL-v3 uses 50 training and 150 test items; AppWorld uses 90 training instances and Test Normal; tau2-Bench uses domain-specific train/test data."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.5-8",
+          "claim": "Skills are retrieved from the initial query and evaluated with Avg@4, Pass@4 and Pass@1 across benchmarks with different tool schemas and interaction modes."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SC + KB preserves that some levels are procedural while others also encode declarative environment/tool knowledge."
+        }
+      ],
+      "claim_boundary": "Metrics and tool schemas differ across benchmarks; pooled averages are breadth summaries rather than one matched task distribution."
+    },
+    {
+      "paper": "SkVM",
+      "pdf": "papers/skvm_revisiting_language_vm_for_skills_across_heterogenous_llms_and_harnesses.pdf",
+      "normalized_target": "RT",
+      "carrier": "compiled/runtime-bound skill artifacts",
+      "update_operator": [
+        "profile",
+        "AOT/JIT compile",
+        "bind environment",
+        "extract concurrency"
+      ],
+      "generalization": [
+        "cross-model",
+        "cross-harness portability"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "completion",
+        "token",
+        "latency and compatibility measurements"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-4",
+          "claim": "SkVM treats skills as code and LLMs as heterogeneous processors and introduces a compilation/runtime system."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.4, 9-10",
+          "claim": "Experiments cover multiple models and three harnesses, including BareAgent, OpenCode and OpenClaw, with multiple generated inputs per task."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.8-10",
+          "claim": "Primary measures include task completion, tokens and latency on a specified Mac Mini M4 setup."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "RT marks runtime/compiler evolution rather than acquisition of new procedural knowledge."
+        }
+      ],
+      "claim_boundary": "Should be compared on portability and efficiency, not placed in a skill-quality leaderboard based only on success rate."
+    },
+    {
+      "paper": "Trace2Skill",
+      "pdf": "papers/trace2skill_distill_trajectory_local_lessons_into_transferable_agent_skills.pdf",
+      "normalized_target": "SC/consolidated skill directory",
+      "carrier": "filesystem directory with SKILL.md and resources",
+      "update_operator": [
+        "extract trajectory-local patches",
+        "hierarchically consolidate"
+      ],
+      "generalization": [
+        "held-out artifact",
+        "OOD dataset",
+        "cross-model/family"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "successful/failed trajectories",
+        "held-out pass rate"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.2-3",
+          "claim": "A skill is formalized as a human-readable directory with a root SKILL.md and auxiliary references, scripts or assets, used by a fixed LLM agent."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.4",
+          "claim": "SpreadsheetBench-Verified is split into 200 evolution problems and 200 held-out evaluation problems."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.4, 13 onward",
+          "claim": "Additional evaluations cover artifact-disjoint and OOD transfer, including table, document and mathematical settings and cross-model reuse."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SC/consolidated directory records many-to-one consolidation without assuming every file is an independently addressable skill."
+        }
+      ],
+      "claim_boundary": "Some reported transfer is within-domain artifact-disjoint rather than cross-domain; the exact source-target relation must be named per cell."
+    },
+    {
+      "paper": "Who Grades the Grader?",
+      "pdf": "papers/who_grades_the_grader_co_evolving_evaluation_metrics_and_skills_for_self_improving_llm_agents.pdf",
+      "normalized_target": "EV + SU/SC",
+      "carrier": "evolved metric plus skill lifecycle state",
+      "update_operator": [
+        "co-evolve metric",
+        "create/revise/retire skills",
+        "outer audit"
+      ],
+      "generalization": [
+        "held-out metric reliability",
+        "reference-free audit"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "tiny anchored dev set",
+        "locked test reference",
+        "independent judge"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-3",
+          "claim": "The paper co-evolves an evaluator metric and a skill loop while keeping test held out and locked."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.2-6",
+          "claim": "The protocol uses MBPP+, Spider 2.0-Snow and reference-free report generation, with a small anchored development set and an independent outer audit."
+        },
+        {
+          "level": "E1",
+          "location": "PDF experiments and ablations",
+          "claim": "Removing anchors can cause metric collapse or Goodhart-style failure."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "EV is the primary target because evaluator reliability is the central outcome, even though skills co-evolve."
+        }
+      ],
+      "claim_boundary": "Agent final accuracy alone is insufficient; evaluator retention, anchor generalization and reward-hacking evidence are required."
+    },
+    {
+      "paper": "WikiSkill",
+      "pdf": "papers/wikiskill_compiling_agent_experience_into_persistent_knowledge_for_skill_evolution.pdf",
+      "normalized_target": "W→SU/SC",
+      "carrier": "persistent wiki plus filesystem skill directories",
+      "update_operator": [
+        "accumulate wiki",
+        "compile skill",
+        "gate",
+        "rollback"
+      ],
+      "generalization": [
+        "held-out within benchmark",
+        "cross-model",
+        "cross-benchmark breadth"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "train trajectories",
+        "validation gate",
+        "test evaluator"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF pp.1-4",
+          "claim": "Raw execution experience, accumulated wiki knowledge and executable filesystem skills are distinct states in the method."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.2-7",
+          "claim": "The lifecycle includes validation gating and rollback so rejected skill updates do not erase accumulated wiki knowledge."
+        },
+        {
+          "level": "E1",
+          "location": "PDF pp.3, 7-14",
+          "claim": "Evaluation spans five benchmarks and five models and includes cross-model transfer."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "W→SU/SC represents memory-to-skill compilation and subsequent collection maintenance."
+        }
+      ],
+      "claim_boundary": "The contribution of persistent wiki state must be separated from the contribution of the final compiled skill."
+    },
+    {
+      "paper": "SKILL-KD",
+      "pdf": "papers/skill-kd_contrastive_skill_distillation_for_llm_agents.pdf",
+      "normalized_target": "SKILL-KD",
+      "carrier": "trajectory contrast distillation",
+      "update_operator": [
+        "contrast trajectory",
+        "skill consolidation"
+      ],
+      "generalization": [
+        "Drift-aware rule assembly",
+        "DocVQA→SpreadsheetBench"
+      ],
+      "parameter_update": false,
+      "feedback": [
+        "Teacher-student trajectory",
+        "Case-specific drift edits"
+      ],
+      "evidence": [
+        {
+          "level": "E1",
+          "location": "PDF p.1-2",
+          "claim": "SKILL-KD uses teacher-student execution traces to select and distil actionable skill rules."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.3-4",
+          "claim": "Teacher-only and student-only baselines score 58.3 and 60.1; pairwise and batch converge at ~59."
+        },
+        {
+          "level": "E1",
+          "location": "PDF p.7",
+          "claim": "SKILL-KD achieves 66.8 avg score with only 38 distilled rules (3,010 words) — 58% of batch."
+        },
+        {
+          "level": "E2",
+          "location": "PDF p.8-9",
+          "claim": "Pairwise produces a longer library (6,966 words) than batch (3,849 words) but with fewer rules."
+        },
+        {
+          "level": "E2",
+          "location": "PDF p.9-10",
+          "claim": "Case-specific drift is handled via trace-linked edits rather than cumulative rule changes."
+        },
+        {
+          "level": "E3",
+          "location": "Survey normalization",
+          "claim": "SKILL-KD distills to actionable rule patches rather than logits or hidden representations."
+        }
+      ],
+      "claim_boundary": "Supports contrastive skill distillation from teacher-student trajectories with drift-aware rule assembly. It does not by itself establish skill-collection scaling, retrieval quality, or cross-skill transfer."
+    }
+  ]
+}

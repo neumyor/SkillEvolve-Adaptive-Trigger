@@ -1,0 +1,179 @@
+{
+  "expe_to_skill_sources": {
+    "evolve2-qwen36-20260923-v2/full/alfworld/run/final/3dd62df37384/scores.jsonl": 134,
+    "evolve2-qwen36-20260923-v2/full/searchqa/final-evolve1/scores.jsonl": 1400,
+    "evolve2-qwen36-20260923-v2/full/searchqa/run/final/ff4d8fec10a8/scores.jsonl": 1400,
+    "final-three-snapshots-20260927/full/alfworld/final/cd0bedc53a42/scores.jsonl": 134,
+    "final-three-snapshots-20260927/full/alfworld/final/ef319c81c7e6/scores.jsonl": 134,
+    "final-three-snapshots-20260927/full/searchqa/final/6e0bb2915a59/scores.jsonl": 1400,
+    "final-three-snapshots-20260927/full/searchqa/final/cefeba0c1826/scores.jsonl": 1400,
+    "final-three-snapshots-20260927/full/searchqa/final/e7b1a77b598b/scores.jsonl": 1400,
+    "l2-card-id-review-full-20260923/alfworld/final/a60c6fb9cc07/scores.jsonl": 134,
+    "l2-card-id-review-full-20260923/searchqa/final/11bef60e8556/scores.jsonl": 1400,
+    "l2-k3-b50-20260923/alfworld/final_comparison/scores.jsonl": 158,
+    "l2-k3-b50-20260923/searchqa/final_comparison/scores.jsonl": 2793,
+    "searchqa-l2-recheck-20260928/full/searchqa/final-evolve2/scores.jsonl": 1400
+  },
+  "expe_to_skill_excluded": {
+    "final-three-snapshots-20260927/preflight/alfworld/final/cd0bedc53a42/scores.jsonl": "preflight/smoke/analysis",
+    "final-three-snapshots-20260927/preflight/alfworld/final/ef319c81c7e6/scores.jsonl": "preflight/smoke/analysis",
+    "final-three-snapshots-20260927/preflight/searchqa/final/6e0bb2915a59/scores.jsonl": "preflight/smoke/analysis",
+    "final-three-snapshots-20260927/preflight/searchqa/final/cefeba0c1826/scores.jsonl": "preflight/smoke/analysis",
+    "final-three-snapshots-20260927/preflight/searchqa/final/e7b1a77b598b/scores.jsonl": "preflight/smoke/analysis",
+    "jev-paired-analysis-20260929/scores.jsonl": "preflight/smoke/analysis",
+    "evolve2-qwen36-20260923/preflight/alfworld/run/final/55b8fbb13c41/scores.jsonl": "preflight/smoke/analysis",
+    "evolve2-qwen36-20260923/preflight/searchqa/run/final/a47bf4631946/scores.jsonl": "preflight/smoke/analysis",
+    "evolve2-qwen36-20260923-v2/full/alfworld/final-evolve1/scores.jsonl": "no nearby passed audit/complete marker",
+    "evolve2-qwen36-20260923-v2/snapshot-smoke/alfworld/scores.jsonl": "preflight/smoke/analysis",
+    "evolve2-qwen36-20260923-v2/snapshot-smoke/searchqa/scores.jsonl": "preflight/smoke/analysis",
+    "evolve2-qwen36-20260923-v2/preflight/alfworld/run/final/b9118ee107f8/scores.jsonl": "preflight/smoke/analysis",
+    "evolve2-qwen36-20260923-v2/preflight/searchqa/run/final/669b2c4a864e/scores.jsonl": "preflight/smoke/analysis",
+    "searchqa-l2-recheck-20260928/full/searchqa/final-evolve2-smoke/scores.jsonl": "preflight/smoke/analysis"
+  },
+  "rethinkskill_sources": {
+    "rethinkskill_full_32_8_20260924/alfworld_judge/runs/final/evaluations/test_round_0000": 134,
+    "rethinkskill_full_32_8_20260924/searchqa_judge/runs/final/evaluations/test_round_0000": 1400
+  },
+  "rethinkskill_excluded": {
+    "('rethinkskill_alfworld_e2e_20260924', 'alfworld_baseline')": 1,
+    "('rethinkskill_alfworld_e2e_20260924', 'alfworld_judge')": 1,
+    "('rethinkskill_full_32_8_20260924', 'alfworld_baseline')": 268,
+    "('rethinkskill_full_32_8_20260924', 'searchqa_baseline')": 2800,
+    "('rethinkskill_pair_v2_20260923', 'searchqa_baseline_retry')": 1,
+    "('rethinkskill_pair_v2_20260923', 'searchqa_judge')": 1,
+    "('rethinkskill_pair_v2_bounded_20260923', 'alfworld_baseline')": 1,
+    "('rethinkskill_pair_v2_bounded_20260923', 'alfworld_judge')": 1,
+    "('rethinkskill_pair_v2_bounded_20260923', 'searchqa_baseline')": 1,
+    "('rethinkskill_pair_v2_bounded_20260923', 'searchqa_judge')": 1,
+    "('rethinkskill_preflight_32_8_20260924', 'alfworld_baseline')": 1,
+    "('rethinkskill_preflight_32_8_20260924', 'alfworld_judge')": 1,
+    "('rethinkskill_preflight_32_8_20260924', 'searchqa_baseline')": 1,
+    "('rethinkskill_preflight_32_8_20260924', 'searchqa_judge')": 1,
+    "('rethinkskill_preflight_32_8_retry_20260924', 'searchqa_baseline')": 1,
+    "('rethinkskill_preflight_32_8_retry_20260924', 'searchqa_judge')": 1,
+    "('rethinkskill_preflight_recovery_b_20260924', 'searchqa_baseline')": 1,
+    "('rethinkskill_preflight_recovery_b_20260924', 'searchqa_judge')": 1,
+    "('rethinkskill_preflight_recovery_c_20260924', 'alfworld_baseline')": 1,
+    "('rethinkskill_preflight_recovery_c_20260924', 'alfworld_judge')": 1,
+    "('rethinkskill_preflight_recovery_c_20260924', 'searchqa_baseline')": 1,
+    "('rethinkskill_preflight_recovery_c_20260924', 'searchqa_judge')": 1,
+    "('rethinkskill_prelaunch_20260923', 'alfworld_baseline')": 1,
+    "('rethinkskill_prelaunch_20260923', 'alfworld_judge')": 1,
+    "('rethinkskill_prelaunch_20260923', 'searchqa_baseline')": 1,
+    "('rethinkskill_prelaunch_20260923', 'searchqa_judge')": 1,
+    "('rethinkskill_prelaunch_qwen36b_20260924', 'searchqa_baseline')": 1,
+    "('rethinkskill_prelaunch_qwen36b_20260924', 'searchqa_judge')": 1,
+    "('rethinkskill_prelaunch_qwen36c_20260924', 'alfworld_baseline')": 1,
+    "('rethinkskill_prelaunch_qwen36c_20260924', 'alfworld_judge')": 1,
+    "('rethinkskill_prelaunch_qwen36c_20260924', 'searchqa_baseline')": 1,
+    "('rethinkskill_prelaunch_qwen36c_20260924', 'searchqa_judge')": 1
+  },
+  "gepa_skillgen_skillopt_sources": {
+    "root": "repos/JudgeGateStudy/experiments/direct_v3_20260922_r3/full",
+    "conditions": {
+      "searchqa_gepa_judge": {
+        "test_eval": "searchqa_gepa_judge/test_eval.jsonl",
+        "skill_source": "result.json result.best_idx -> result.candidates[best_idx].skill",
+        "model": "qwen3.7-plus"
+      },
+      "alfworld_gepa_judge": {
+        "test_eval": "alfworld_gepa_judge/test_eval.jsonl",
+        "skill_source": "result.json result.best_idx -> result.candidates[best_idx].skill",
+        "model": "qwen3.7-plus"
+      },
+      "searchqa_skillgen_judge": {
+        "test_eval": "searchqa_skillgen_judge/test_skill_units/*.json",
+        "skill_source": "agent_config.skill_id per unit",
+        "model_source": "agent_config.model",
+        "warning": "Audit passed; all 1400 test units are present; audit records two HTTP 500 data_inspection_failed events in baseline units."
+      },
+      "alfworld_skillgen_judge": {
+        "test_eval": "alfworld_skillgen_judge/test_skill_units/*.json",
+        "skill_source": "agent_config.skill_id per unit",
+        "model_source": "agent_config.model"
+      },
+      "searchqa_skillopt_judge": {
+        "test_eval": "searchqa_skillopt_judge/test_eval/results.jsonl",
+        "skill_source": "SHA-256 prefix of condition best_skill.md",
+        "model_source": "config.json optimizer_model/target_model/judge_model"
+      },
+      "alfworld_skillopt_judge": {
+        "test_eval": "alfworld_skillopt_judge/test_eval/results.jsonl",
+        "skill_source": "SHA-256 prefix of condition best_skill.md",
+        "model_source": "config.json optimizer_model/target_model/judge_model"
+      }
+    },
+    "per_condition": {
+      "searchqa GEPA": {
+        "best_idx": 2,
+        "skill": "gepa@9d367f421226",
+        "pass": 1148,
+        "fail": 252,
+        "baseline_equals_best": false,
+        "audit_warnings": []
+      },
+      "alfworld GEPA": {
+        "best_idx": 0,
+        "skill": "gepa@c8219398bf58",
+        "pass": 114,
+        "fail": 20,
+        "baseline_equals_best": true,
+        "audit_warnings": []
+      },
+      "searchqa SkillGEN": {
+        "skill": "skillgen@51f9e380-06f6-4af3-b60b-abb27bd72f32",
+        "pass": 1139,
+        "fail": 261,
+        "audit_warnings": [],
+        "recorded_http_500_failures": 2
+      },
+      "alfworld SkillGEN": {
+        "skill": "skillgen@71772632-1cc7-4ef7-9403-282a829d7ad0",
+        "pass": 110,
+        "fail": 24,
+        "audit_warnings": [],
+        "recorded_http_500_failures": 0
+      },
+      "searchqa SkillOpt": {
+        "skill": "skillopt@b9b0c8ea6c6d",
+        "pass": 1160,
+        "fail": 240,
+        "audit_warnings": []
+      },
+      "alfworld SkillOpt": {
+        "skill": "skillopt@1991fde704bb",
+        "pass": 108,
+        "fail": 26,
+        "audit_warnings": []
+      }
+    },
+    "raw_rows": {
+      "searchqa GEPA": 1400,
+      "alfworld GEPA": 134,
+      "searchqa SkillGEN": 1400,
+      "alfworld SkillGEN": 134,
+      "searchqa SkillOpt": 1400,
+      "alfworld SkillOpt": 134
+    },
+    "new_unique_rows": 4602,
+    "excluded": {
+      "baselines": "excluded; only judge/evolved skill conditions were considered",
+      "smoke_or_partial": "excluded; only full conditions with complete status and passed audit were considered"
+    }
+  },
+  "skill_artifacts": {
+    "directory": "skill_files",
+    "manifest": "skill_files/manifest.json",
+    "count": 46,
+    "source_policy": "Each artifact is an exact copied Markdown body from the run that produced/evaluated the corresponding skill. ExpeToSkill artifacts are split when the same short skill key has different bodies across runs.",
+    "tuple_rows": 17572,
+    "readme": "skill_files/README.md",
+    "by_method": {
+      "ExpeToSkill (expel)": 38,
+      "GEPA": 2,
+      "RethinkSkill": 2,
+      "SkillGEN": 2,
+      "SkillOpt": 2
+    }
+  }
+}

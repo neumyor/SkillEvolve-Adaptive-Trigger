@@ -34,8 +34,8 @@ benchmark/alfworld-eval/.data/
 benchmark/searchqa-eval/data/
 **/.venv/
 
-# Pulled research repositories are external dependencies, not vendored code
-repos/pulled/
+# Nested git repositories are external dependencies, never vendored
+repos/
 
 # Build artifacts and local tooling
 build/
@@ -45,3 +45,10 @@ dist/
 htmlcov/
 .DS_Store
 .codex/
+
+# Session-local tooling and literature (added 2026-10-10 tidy-up)
+.claude/
+.dsh-lan.patch.yml
+papers/
+benchmark/*-eval/
+**/retry_archives/
