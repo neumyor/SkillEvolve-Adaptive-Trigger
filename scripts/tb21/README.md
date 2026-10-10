@@ -5,42 +5,63 @@
 
 ## 1. 组件总览
 
-一次完整评测由三层代码组成，**只有第 1 层是我们维护的**：
+本目录是一个**自包含的评测包**（2026-10-10 起三层全部打进来）：
 
-| 层 | 位置 | 内容 | 谁维护 |
+| 层 | 包内位置 | 内容 | 来源 |
 |---|---|---|---|
-| 1. 我们的启动与审计 | 本目录 → 远程 `/data2/niuyiming/scripts/` | runner 副本、网络修复环境类、滚动启动器、审计 | 我们 |
-| 2. 腾讯适配层 | `/data2/liyishan/tb21-tencent-skill/python/`（只读） | `run_tencent_job.py`、`tencent_tb2_snapshot.py`（E2B 环境类）、`tencent_sandbox_terminus.py`（agent） | liyishan |
-| 3. Harbor 与题库 | `~/agentbrew-tb21/.venv`（harbor 包）；`/data2/liyishan/tbench2-openclaw-min/sources/terminal-bench-2-1-modelbest/tasks`（89 题，只读） | trial 调度、verifier、重试 | 上游 |
+| 1. 我们的启动与审计 | 根目录 + `python/` | runner、网络修复环境类、滚动启动器、审计 | 我们 |
+| 2. 腾讯适配层 | `vendor/tb21-tencent-skill/python/`、`vendor/framework-python/` | `run_tencent_job.py`、`tencent_tb2_snapshot.py`（E2B 环境类）、`tencent_sandbox_terminus.py`（agent）等 | liyishan（快照，快照时间 2026-10-10） |
+| 3. Harbor 与题库 | `vendor/claw-harbor/`（main @ `37a234f8de64`）、`vendor/tasks/`（89 题）、`vendor/requirements.txt` | trial 调度、verifier、重试 | 上游 |
+
+密钥：`secrets.env`（含 `E2B_API_KEY` / `E2B_DOMAIN` / `TBENCH_LLM_KEY`，权限 600）。
+**它在 `.gitignore` 里**：目录拷贝会带上它，但 git 推送永远不会泄露它。
+
+### 新机器部署（三步）
+
+```bash
+# 1. 拷贝整个 scripts/tb21 目录（含 vendor/ 和 secrets.env）
+# 2. 复原 venv（需要 python3.12；harbor 从 vendor/claw-harbor 源码安装）
+./bootstrap.sh
+# 3. 网络前提：机器必须在腾讯 VPC 内（TBENCH_VPC_DNS、内网 PyPI 镜像、
+#    ap-beijing.tencentags.com 只在腾讯内网可达，见第 4 节）
+. ./campaign.env && python3 recover_rolling.py <queue.tsv> <jobs_dir>
+```
 
 ### 本目录文件
 
 | 文件 | 作用 |
 |---|---|
-| `run_tencent_tb21_smoke_niuyiming.sh` | **runner**：liyishan 原脚本的副本，生成 Harbor job YAML 并启动。我们加的全部改动都由环境变量控制（见第 3 节），不设时与原版行为一致 |
+| `run_tencent_tb21_smoke_niuyiming.sh` | **runner**：liyishan 原脚本的副本，生成 Harbor job YAML 并启动。我们加的全部改动都由环境变量控制（见第 3 节）；**所有路径默认相对本目录**（vendor/、.venv/、secrets.env、python/），可用环境变量指到外部树 |
+| `bootstrap.sh` | 新机器上复原 Harbor venv（python3.12 + vendor/requirements.txt + vendor/claw-harbor） |
 | `python/tencent_vpc_dns_env.py` | **网络修复环境类**：继承原 E2B 环境类，只重写 `start()`，在沙箱启动后修 DNS / apt 源（见第 4 节） |
 | `python/test_tencent_vpc_dns_env.py` | 上面那个类的离线测试（6 个用例，在伪造的根文件系统上跑 shell 逻辑，不需要沙箱） |
 | `campaign.env` | **一次评测的全部参数**（网络开关、重试、verifier 时限）。启动前 `source`，启动器会把这些值逐条记进 manifest |
 | `recover_rolling.py` | **滚动启动器**：队列里每一行是一次独立的 runner 调用（1 个 trial），每分钟启动 2 个、不设并发上限 |
-| `audit_trials.py` | **审计 + 指标**：逐条判定每个 trial 是否有效，算出每题缺几条，输出 avg@N / pass@N |
+| `audit_trials.py` | **审计 + 指标**：逐条判定每个 trial 是否有效，算出每题缺几条，输出 avg@N / pass@N。结果根目录用 `TBENCH_RESULTS_ROOT` 改（默认 node29 的 `/data2/niuyiming`），明细写到 `$TBENCH_RESULTS_ROOT/audit_<日期>.json` |
 | `build_rerun_queue.py` | 从审计结果生成补跑队列 |
 | `rerun_queue_20261010.tsv` | 当前的补跑队列（39 条：qwen 10、dpsk 29） |
-| `env.sh.example` | 远程 `~/niuyiming/SkillExpand-tbeval/env.sh` 的副本：加载密钥文件、指定 Harbor venv（本身不含密钥） |
+| `secrets.env` | 密钥（E2B / LLM API key）。**gitignore，勿提交、勿推送** |
+| `env.sh.example` | 按主机覆盖默认路径时的参考（新机器通常不需要） |
+| `vendor/` | 第二、三层的完整快照（见上表） |
 | `archive/` | 已被取代的旧工具与旧队列，仅留档 |
+
+### vendor 里两处不会触发的写死路径
+
+第二层代码快照里有两个 `/data2/liyishan/.../cache` 写死路径，在裸 rollout 下**不会执行**：
+`TB21_PIPELINE_CACHE`（默认 0）控制 pipeline 缓存；uv 0.9.5 归档缓存只在 skills 评测模式（`tencent_tb2_skill_env`）里用到。开着这些开关才需要 node29 上的缓存树。
 
 ## 2. 怎么跑
 
 ### 2.1 跑一批 trial（补跑或全量都用这个）
 
 ```bash
-# 远程 node29
-cd ~/niuyiming/SkillExpand-tbeval && . ./env.sh && . /data2/niuyiming/scripts/campaign.env
+# 在 bundle 目录（node29 上 = /data2/niuyiming/scripts）
+cd <bundle> && . ./campaign.env
 python3 - <<'EOF'      # 用 start_new_session 脱离当前 shell，射后不管（AGENTS.md）
 import os, subprocess
-h = os.path.expanduser("~/niuyiming/SkillExpand-tbeval/logs")
-p = subprocess.Popen(["python3", "/data2/niuyiming/scripts/recover_rolling.py",
-                      "/data2/niuyiming/scripts/rerun_queue_20261010.tsv",
-                      "/data2/niuyiming/e1_fix/jobs"],
+h = os.environ.get("TBENCH_LOGS_DIR", os.path.join(os.getcwd(), "logs"))
+p = subprocess.Popen(["python3", "recover_rolling.py",
+                      "rerun_queue_20261010.tsv", "/data2/niuyiming/e1_fix/jobs"],
                      env=os.environ.copy(), stdout=open(h + "/e1_fix.log", "ab"),
                      stderr=subprocess.STDOUT, start_new_session=True)
 open(h + "/e1_fix.pid", "w").write(f"{p.pid}\n")
@@ -65,7 +86,7 @@ find /data2/niuyiming/e1_fix/jobs -mindepth 3 -maxdepth 3 -name result.json | wc
 python3 /data2/niuyiming/scripts/audit_trials.py
 ```
 
-输出每题还缺几条、各类无效原因的计数，以及 avg@N / pass@N。逐条明细写在 `/data2/niuyiming/audit_20261010.json`。
+输出每题还缺几条、各类无效原因的计数，以及 avg@N / pass@N。逐条明细写在 `$TBENCH_RESULTS_ROOT/audit_<日期>.json`。
 脚本顶部的 `REC_GLOBS` 已包含 `e1_recover` 和 `e1_fix` 两代补跑；以后再加新一代时，在那里追加一行。
 
 ## 3. runner 的开关（全部由环境变量控制）
@@ -111,18 +132,18 @@ python3 /data2/niuyiming/scripts/audit_trials.py
 ## 6. 远程目录布局（node29，用户 xinhaidong）
 
 ```
-~/niuyiming/SkillExpand-tbeval/   # env.sh、venv、logs/
+~/niuyiming/SkillExpand-tbeval/   # env.sh、venv、logs/（e1_fix 这代的运行日志在 logs/）
 /data2/niuyiming/
   scripts/                        # = 本目录（另有 .bak_* 是每次改 runner 前的备份）
   e1_full_q36flash_2att/          # 第一批全量：qwen3.6-flash-distill，89 题 × 2，默认 effort，旧网络
   e1_full_dsv4max_5att/           # 第一批全量：DEEPSEEK_up5zdj，89 题 × 5，reasoning_effort=max，旧网络
-  e1_recover/                     # 第一轮补跑（e1rec_*），旧网络
-  e1_fix/                         # 修好网络后的补跑（e1fix_*），尚未启动
-  audit_20261010.json             # 最新审计明细
+  e1_recover/                     # 第一轮补跑（e1rec_*），旧网络，部分伪 0 分
+  e1_fix/                         # 修好网络后的补跑（e1fix_*），2026-10-10 17:27 启动
+  audit_*.json                    # 最新审计明细
 ```
 
-## 7. 当前状态（2026-10-10）
+## 7. 当前状态（2026-10-10 晚）
 
-- 修好网络后的补跑：**代码已就绪，还没跑 smoke，也没启动补跑**；
-- 当前指标（按第 5 节规则，伪 0 分已剔除）：qwen avg@2 = 0.4326、pass@2 = 45/89；dpsk avg@5 = 0.6152、pass@5 = 74/89。样本不足的题：qwen 8 题、dpsk 10 题。这是补跑之前的数字；
-- 下一步：先跑 2 条 smoke（torch-tensor-parallelism、qemu-startup），确认评测日志里出现 `collected` 后，再启动 `rerun_queue_20261010.tsv`。
+- e1_fix 补跑 39 条（+1 条中途补的 pytorch-model-recovery_6）已全部投喂，qemu 两题 10 条全 1.0（上一批全是伪 0 分）；
+- 等全部出结果后跑 `audit_trials.py` 出最终 avg@N / pass@N；
+- 补跑之前的指标：qwen avg@2 = 0.4326、pass@2 = 45/89；dpsk avg@5 = 0.6152、pass@5 = 74/89。

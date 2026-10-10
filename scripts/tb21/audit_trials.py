@@ -13,18 +13,22 @@ Pre-registered rules (fixed before looking at the data):
 
 Targets: qwen 2 valid trials per task, dpsk 5.
 """
-import collections, glob, json, os, re, sys
+import collections, glob, json, os, re, sys, time
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+# Experiment products live outside the bundle by default (node29: /data2/niuyiming);
+# point TBENCH_RESULTS_ROOT elsewhere to audit a copy on another machine.
+RESULTS_ROOT = os.environ.get("TBENCH_RESULTS_ROOT", "/data2/niuyiming")
 MAIN = {
-    "q": "/data2/niuyiming/e1_full_q36flash_2att/jobs/e1_full_q36flash_2att",
-    "d": "/data2/niuyiming/e1_full_dsv4max_5att/jobs/e1_full_dsv4max_5att",
+    "q": os.path.join(RESULTS_ROOT, "e1_full_q36flash_2att/jobs/e1_full_q36flash_2att"),
+    "d": os.path.join(RESULTS_ROOT, "e1_full_dsv4max_5att/jobs/e1_full_dsv4max_5att"),
 }
 # Every recovery generation, in launch order: e1_recover (e1rec_*, old network),
 # then e1_fix (e1fix_*, VPC DNS + intranet mirrors).  Add new generations here.
-REC_GLOBS = ("/data2/niuyiming/e1_recover/jobs/e1rec_{tag}_*",
-             "/data2/niuyiming/e1_fix/jobs/e1fix_{tag}_*")
+REC_GLOBS = (os.path.join(RESULTS_ROOT, "e1_recover/jobs/e1rec_{tag}_*"),
+             os.path.join(RESULTS_ROOT, "e1_fix/jobs/e1fix_{tag}_*"))
 TARGET = {"q": 2, "d": 5}
-TASKS_DIR = "/data2/liyishan/tbench2-openclaw-min/sources/terminal-bench-2-1-modelbest/tasks"
+TASKS_DIR = os.environ.get("TBENCH_TASKS_DIR", os.path.join(HERE, "vendor/tasks"))
 
 INFRA_EXC = {"AgentSetupTimeoutError", "VerifierTimeoutError", "SandboxException",
              "AddTestsDirError", "EnvironmentStartTimeoutError", "DownloadVerifierDirError",
@@ -129,8 +133,11 @@ for tag, label in (("q", "qwen"), ("d", "dpsk")):
 for r in rows:
     out["trials"].append({"model": r[0], "source": r[1], "task": r[2], "trial_dir": r[3],
                           "status": r[4], "reason": r[5], "reward": r[6]})
-json.dump(out, open("/data2/niuyiming/audit_20261010.json", "w"), ensure_ascii=False, indent=1)
-print("\n逐条明细已写入 /data2/niuyiming/audit_20261010.json")
+AUDIT_JSON = os.environ.get(
+    "TBENCH_AUDIT_JSON",
+    os.path.join(RESULTS_ROOT, "audit_" + time.strftime("%Y%m%d") + ".json"))
+json.dump(out, open(AUDIT_JSON, "w"), ensure_ascii=False, indent=1)
+print("\n逐条明细已写入 " + AUDIT_JSON)
 
 
 # ---------------------------------------------------------------------------

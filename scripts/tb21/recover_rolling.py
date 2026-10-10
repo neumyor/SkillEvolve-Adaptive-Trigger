@@ -11,17 +11,19 @@ Campaign settings (network, retries, verifier ceiling) come from the caller's
 environment -- source campaign.env first -- and are written next to every
 trial in manifest.tsv, so each trial's conditions stay traceable.
 
-Run detached:
-  cd ~/niuyiming/SkillExpand-tbeval && . ./env.sh && . /data2/niuyiming/scripts/campaign.env
-  python3 /data2/niuyiming/scripts/recover_rolling.py <queue.tsv> <jobs_dir>
+Run detached from the bundle directory (see README §2.1):
+  . ./secrets.env 2>/dev/null; . ./campaign.env
+  python3 recover_rolling.py <queue.tsv> <jobs_dir>
 """
 import os
 import subprocess
 import sys
 import time
 
-RUNNER = "/data2/niuyiming/scripts/run_tencent_tb21_smoke_niuyiming.sh"
-LOGS = os.path.expanduser("~/niuyiming/SkillExpand-tbeval/logs")
+HERE = os.path.dirname(os.path.abspath(__file__))
+RUNNER = os.environ.get("TBENCH_RUNNER",
+                        os.path.join(HERE, "run_tencent_tb21_smoke_niuyiming.sh"))
+LOGS = os.environ.get("TBENCH_LOGS_DIR", os.path.join(HERE, "logs"))
 # Recorded per trial; all are read by the runner / environment class.
 RECORDED = ("TBENCH_VPC_DNS", "TBENCH_PYPI_MIRROR", "TBENCH_APT_SNAPSHOT_BULLSEYE",
             "TBENCH_APT_INTRANET_MIRROR", "TBENCH_MAX_TRIAL_RETRIES",
@@ -32,6 +34,7 @@ RECORDED = ("TBENCH_VPC_DNS", "TBENCH_PYPI_MIRROR", "TBENCH_APT_SNAPSHOT_BULLSEY
 def main() -> int:
     queue_path, jobs_dir = sys.argv[1], sys.argv[2]
     os.makedirs(jobs_dir, exist_ok=True)
+    os.makedirs(LOGS, exist_ok=True)
     rows = [line.rstrip("\n").split("\t") for line in open(queue_path) if line.strip()]
     settings = {k: os.environ.get(k, "") for k in RECORDED}
     print(f"[{time.strftime('%F %T')}] queue: {len(rows)} trials, 2 per minute; {settings}", flush=True)

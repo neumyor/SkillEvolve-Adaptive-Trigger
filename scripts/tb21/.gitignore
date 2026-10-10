@@ -1,0 +1,13 @@
+# Secrets live in secrets.env (pulled from the run host, chmod 600).  Kept OUT
+# of git history on purpose: copying/moving the bundle directory carries them,
+# but pushing this repo anywhere must never leak them.  To also commit them,
+# remove this line and accept the risk.
+secrets.env
+
+# Generated on the run host, never part of the bundle.
+.venv/
+logs/
+jobs/
+__pycache__/
+*.pid
+*.log

@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run this script on jinan40. It only keeps the Harbor process alive; E2B owns
-# the task sandbox and its persistent snapshot.
+# Run this script from the tb21 bundle (any machine with the vendor/ tree and a
+# venv from bootstrap.sh). It only keeps the Harbor process alive; E2B owns the
+# task sandbox and its persistent snapshot.
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-SKILL_ROOT=/data2/liyishan/tb21-tencent-skill
+
+# All external trees default to locations inside the bundle; override any of
+# them with env vars to reuse a live tree elsewhere instead.
+SKILL_ROOT="${TBENCH_TB21_TENCENT_SKILL_ROOT:-${SCRIPT_DIR}/vendor/tb21-tencent-skill}"
 
 # Load credentials into this process only. The file is never copied to the
-# remote host or interpolated into the generated Harbor configuration.
-ENV_FILE="${TBENCH_TENCENT_ENV_FILE:-${SKILL_ROOT}/.env}"
+# sandbox or interpolated into the generated Harbor configuration.
+ENV_FILE="${TBENCH_TENCENT_ENV_FILE:-${SCRIPT_DIR}/secrets.env}"
 if [[ -f "${ENV_FILE}" ]]; then
   set -a
   # shellcheck disable=SC1090
@@ -16,12 +20,14 @@ if [[ -f "${ENV_FILE}" ]]; then
   set +a
 fi
 
-: "${HARBOR_BIN:=/data2/liyishan/tbench2-openclaw-min/.venv/bin/harbor}"
-: "${PYTHON_BIN:=/data2/liyishan/tbench2-openclaw-min/.venv/bin/python}"
-: "${TENCENT_ADAPTER_PYTHON:=/data2/liyishan/tbench2-openclaw-min/framework/python}"
-: "${DATASET_PATH:=/data2/liyishan/tbench2-openclaw-min/sources/terminal-bench-2-1-modelbest/tasks}"
+: "${TBENCH_VENV_DIR:=${SCRIPT_DIR}/.venv}"
+: "${HARBOR_BIN:=${TBENCH_VENV_DIR}/bin/harbor}"
+: "${PYTHON_BIN:=${TBENCH_VENV_DIR}/bin/python}"
+: "${TENCENT_ADAPTER_PYTHON:=${SCRIPT_DIR}/vendor/framework-python}"
+: "${DATASET_PATH:=${SCRIPT_DIR}/vendor/tasks}"
 : "${TBENCH_EVAL_MODE:=bare}"
-: "${TBENCH_SKILL_ROOT:=/data2/liyishan/tbench2-openclaw-min/artifacts/tencent-openclaw-skills/tb21_tencent_claude_authoring_full_20260817_003000/skills}"
+# Only read when TBENCH_EVAL_MODE=skills; skill packs are not vendored.
+: "${TBENCH_SKILL_ROOT:=${SCRIPT_DIR}/vendor/skills}"
 : "${TBENCH_RUN_MODE:=smoke}"
 : "${TBENCH_N_ATTEMPTS:=1}"
 TBENCH_N_CONCURRENT_EXPLICIT=0
@@ -68,16 +74,16 @@ esac
 
 case "${TBENCH_EVAL_MODE}" in
   bare)
-    : "${JOBS_DIR:=/data2/liyishan/tbench2-openclaw-min/jobs/tb21_tencent_smoke}"
-    : "${RETRY_ARCHIVE_ROOT:=/data2/liyishan/tbench2-openclaw-min/jobs/tb21_tencent_retry_archives}"
+    : "${JOBS_DIR:=${SCRIPT_DIR}/jobs/tb21_tencent_smoke}"
+    : "${RETRY_ARCHIVE_ROOT:=${SCRIPT_DIR}/jobs/tb21_tencent_retry_archives}"
     : "${E2B_ENVIRONMENT_IMPORT:=tencent_vpc_dns_env:TencentVpcDnsE2BEnvironment}"
     : "${AGENT_IMPORT:=tencent_sandbox_terminus:TencentSandboxTerminus2}"
     SKILL_AGENT_KWARGS=""
     SKILL_ENV_KWARGS=""
     ;;
   skills)
-    : "${JOBS_DIR:=/data2/liyishan/tbench2-openclaw-min/jobs/tb21_tencent_skill_eval}"
-    : "${RETRY_ARCHIVE_ROOT:=/data2/liyishan/tbench2-openclaw-min/jobs/tb21_tencent_skill_retry_archives}"
+    : "${JOBS_DIR:=${SCRIPT_DIR}/jobs/tb21_tencent_skill_eval}"
+    : "${RETRY_ARCHIVE_ROOT:=${SCRIPT_DIR}/jobs/tb21_tencent_skill_retry_archives}"
     : "${E2B_ENVIRONMENT_IMPORT:=tencent_tb2_skill_env:TencentTaskSkillE2BEnvironment}"
     : "${AGENT_IMPORT:=tencent_sandbox_terminus:TencentSkillTerminus2}"
     if [[ ! -f "${TBENCH_SKILL_ROOT}/${TASK_NAME}/SKILL.md" && "${TBENCH_RUN_MODE}" == "smoke" ]]; then
@@ -139,7 +145,7 @@ if [[ ! -f "${TENCENT_ADAPTER_PYTHON}/harbor_e2b_modelbest/__init__.py" ]]; then
   exit 2
 fi
 
-export PYTHONPATH="/data2/niuyiming/scripts/python:${SKILL_ROOT}/python:${TENCENT_ADAPTER_PYTHON}${PYTHONPATH:+:${PYTHONPATH}}"
+export PYTHONPATH="${SCRIPT_DIR}/python:${SKILL_ROOT}/python:${TENCENT_ADAPTER_PYTHON}${PYTHONPATH:+:${PYTHONPATH}}"
 export TBENCH_VPC_DNS TBENCH_APT_INTRANET_MIRROR TBENCH_APT_SNAPSHOT_BULLSEYE
 export E2B_DOMAIN SNAPSHOT_RETRIES TBENCH_EVAL_MODE TBENCH_SKILL_ROOT
 export TBENCH_PERSIST_SANDBOXES TBENCH_E2B_START_CONCURRENCY TBENCH_E2B_RPC_CONCURRENCY
