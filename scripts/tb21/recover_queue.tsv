@@ -1,0 +1,50 @@
+e1rec_d_pytorch-model-recovery_1	DEEPSEEK_up5zdj	max	pytorch-model-recovery
+e1rec_d_pytorch-model-recovery_2	DEEPSEEK_up5zdj	max	pytorch-model-recovery
+e1rec_d_pytorch-model-recovery_3	DEEPSEEK_up5zdj	max	pytorch-model-recovery
+e1rec_d_pytorch-model-recovery_4	DEEPSEEK_up5zdj	max	pytorch-model-recovery
+e1rec_d_torch-pipeline-parallelism_1	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1rec_d_torch-pipeline-parallelism_2	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1rec_d_torch-pipeline-parallelism_3	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1rec_d_torch-pipeline-parallelism_4	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1rec_d_torch-tensor-parallelism_1	DEEPSEEK_up5zdj	max	torch-tensor-parallelism
+e1rec_d_torch-tensor-parallelism_2	DEEPSEEK_up5zdj	max	torch-tensor-parallelism
+e1rec_d_torch-tensor-parallelism_3	DEEPSEEK_up5zdj	max	torch-tensor-parallelism
+e1rec_d_torch-tensor-parallelism_4	DEEPSEEK_up5zdj	max	torch-tensor-parallelism
+e1rec_d_mteb-retrieve_1	DEEPSEEK_up5zdj	max	mteb-retrieve
+e1rec_d_mteb-retrieve_2	DEEPSEEK_up5zdj	max	mteb-retrieve
+e1rec_d_mteb-retrieve_3	DEEPSEEK_up5zdj	max	mteb-retrieve
+e1rec_d_configure-git-webserver_1	DEEPSEEK_up5zdj	max	configure-git-webserver
+e1rec_d_configure-git-webserver_2	DEEPSEEK_up5zdj	max	configure-git-webserver
+e1rec_d_model-extraction-relu-logits_1	DEEPSEEK_up5zdj	max	model-extraction-relu-logits
+e1rec_d_model-extraction-relu-logits_2	DEEPSEEK_up5zdj	max	model-extraction-relu-logits
+e1rec_q_pytorch-model-recovery_1	qwen3.6-flash-distill		pytorch-model-recovery
+e1rec_q_pytorch-model-recovery_2	qwen3.6-flash-distill		pytorch-model-recovery
+e1rec_q_torch-pipeline-parallelism_1	qwen3.6-flash-distill		torch-pipeline-parallelism
+e1rec_q_torch-pipeline-parallelism_2	qwen3.6-flash-distill		torch-pipeline-parallelism
+e1rec_q_torch-tensor-parallelism_1	qwen3.6-flash-distill		torch-tensor-parallelism
+e1rec_q_torch-tensor-parallelism_2	qwen3.6-flash-distill		torch-tensor-parallelism
+e1rec_q_mteb-retrieve_1	qwen3.6-flash-distill		mteb-retrieve
+e1rec_q_configure-git-webserver_1	qwen3.6-flash-distill		configure-git-webserver
+e1rec_q_build-pov-ray_1	qwen3.6-flash-distill		build-pov-ray
+e1rec_q_circuit-fibsqrt_1	qwen3.6-flash-distill		circuit-fibsqrt
+e1rec_q_code-from-image_1	qwen3.6-flash-distill		code-from-image
+e1rec_q_extract-moves-from-video_1	qwen3.6-flash-distill		extract-moves-from-video
+e1rec_q_feal-linear-cryptanalysis_1	qwen3.6-flash-distill		feal-linear-cryptanalysis
+e1rec_q_gpt2-codegolf_1	qwen3.6-flash-distill		gpt2-codegolf
+e1rec_q_largest-eigenval_1	qwen3.6-flash-distill		largest-eigenval
+e1rec_q_make-doom-for-mips_1	qwen3.6-flash-distill		make-doom-for-mips
+e1rec_q_path-tracing_1	qwen3.6-flash-distill		path-tracing
+e1rec_q_qemu-alpine-ssh_1	qwen3.6-flash-distill		qemu-alpine-ssh
+e1rec_q_raman-fitting_1	qwen3.6-flash-distill		raman-fitting
+e1rec_q_sanitize-git-repo_1	qwen3.6-flash-distill		sanitize-git-repo
+e1rec_q_train-fasttext_1	qwen3.6-flash-distill		train-fasttext
+e1rec_q_adaptive-rejection-sampler_1	qwen3.6-flash-distill		adaptive-rejection-sampler
+e1rec_q_adaptive-rejection-sampler_2	qwen3.6-flash-distill		adaptive-rejection-sampler
+e1rec_d_code-from-image_1	DEEPSEEK_up5zdj	max	code-from-image
+e1rec_d_filter-js-from-html_1	DEEPSEEK_up5zdj	max	filter-js-from-html
+e1rec_d_fix-git_1	DEEPSEEK_up5zdj	max	fix-git
+e1rec_d_headless-terminal_1	DEEPSEEK_up5zdj	max	headless-terminal
+e1rec_d_largest-eigenval_1	DEEPSEEK_up5zdj	max	largest-eigenval
+e1rec_d_llm-inference-batching-scheduler_1	DEEPSEEK_up5zdj	max	llm-inference-batching-scheduler
+e1rec_d_pytorch-model-cli_1	DEEPSEEK_up5zdj	max	pytorch-model-cli
+e1rec_d_regex-log_1	DEEPSEEK_up5zdj	max	regex-log
