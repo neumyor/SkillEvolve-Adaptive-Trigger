@@ -33,6 +33,9 @@ fi
 : "${TBENCH_VERIFIER_MULTIPLIER:=2}"
 : "${TBENCH_SETUP_MULTIPLIER:=3}"
 : "${TBENCH_VERIFIER_OVERRIDE:=null}"
+: "${TBENCH_VPC_DNS:=}"
+: "${TBENCH_APT_INTRANET_MIRROR:=0}"
+: "${TBENCH_APT_SNAPSHOT_BULLSEYE:=0}"
 REASONING_EFFORT_LINE=""
 SANDBOX_ENV_BLOCK=""
 if [[ -n "${TBENCH_PYPI_MIRROR:-}" ]]; then
@@ -67,7 +70,7 @@ case "${TBENCH_EVAL_MODE}" in
   bare)
     : "${JOBS_DIR:=/data2/liyishan/tbench2-openclaw-min/jobs/tb21_tencent_smoke}"
     : "${RETRY_ARCHIVE_ROOT:=/data2/liyishan/tbench2-openclaw-min/jobs/tb21_tencent_retry_archives}"
-    : "${E2B_ENVIRONMENT_IMPORT:=tencent_tb2_snapshot:TencentSnapshotE2BEnvironment}"
+    : "${E2B_ENVIRONMENT_IMPORT:=tencent_vpc_dns_env:TencentVpcDnsE2BEnvironment}"
     : "${AGENT_IMPORT:=tencent_sandbox_terminus:TencentSandboxTerminus2}"
     SKILL_AGENT_KWARGS=""
     SKILL_ENV_KWARGS=""
@@ -136,7 +139,8 @@ if [[ ! -f "${TENCENT_ADAPTER_PYTHON}/harbor_e2b_modelbest/__init__.py" ]]; then
   exit 2
 fi
 
-export PYTHONPATH="${SKILL_ROOT}/python:${TENCENT_ADAPTER_PYTHON}${PYTHONPATH:+:${PYTHONPATH}}"
+export PYTHONPATH="/data2/niuyiming/scripts/python:${SKILL_ROOT}/python:${TENCENT_ADAPTER_PYTHON}${PYTHONPATH:+:${PYTHONPATH}}"
+export TBENCH_VPC_DNS TBENCH_APT_INTRANET_MIRROR TBENCH_APT_SNAPSHOT_BULLSEYE
 export E2B_DOMAIN SNAPSHOT_RETRIES TBENCH_EVAL_MODE TBENCH_SKILL_ROOT
 export TBENCH_PERSIST_SANDBOXES TBENCH_E2B_START_CONCURRENCY TBENCH_E2B_RPC_CONCURRENCY
 export TBENCH_FAIL_FAST_CONNECTION_ERRORS

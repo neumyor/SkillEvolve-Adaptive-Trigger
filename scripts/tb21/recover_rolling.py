@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
-"""Rolling single-trial recovery feeder (2026-10-10 redesign).
+"""Rolling single-trial launcher for TB2.1 on Tencent E2B.
 
-Instead of grouped Harbor runs, the exact 50 missing trials form one flat
-queue, longest-expected first.  Two trials are launched per minute (no
-concurrency cap); each trial is its own runner invocation with its own
-RUN_ID, so no cold-start burst ever happens.  A manifest maps every
-recovery arm back to its task and model.
+Every line of the queue (TSV: run_id, model, effort, task) becomes one
+independent runner invocation with N_ATTEMPTS=1 and its own RUN_ID.  Two
+trials start per minute with no concurrency cap, so sandboxes never cold-start
+in a burst (the cause of the AgentSetupTimeoutError / tmux-not-installed
+failures of the first full runs).
 
-Run detached:  cd ~/niuyiming/SkillExpand-tbeval && . ./env.sh && \
-               python3 /data2/niuyiming/scripts/recover_rolling.py <queue.tsv>
+Campaign settings (network, retries, verifier ceiling) come from the caller's
+environment -- source campaign.env first -- and are written next to every
+trial in manifest.tsv, so each trial's conditions stay traceable.
+
+Run detached:
+  cd ~/niuyiming/SkillExpand-tbeval && . ./env.sh && . /data2/niuyiming/scripts/campaign.env
+  python3 /data2/niuyiming/scripts/recover_rolling.py <queue.tsv> <jobs_dir>
 """
 import os
 import subprocess
@@ -16,16 +21,25 @@ import sys
 import time
 
 RUNNER = "/data2/niuyiming/scripts/run_tencent_tb21_smoke_niuyiming.sh"
-JOBS_DIR = "/data2/niuyiming/e1_recover/jobs"
 LOGS = os.path.expanduser("~/niuyiming/SkillExpand-tbeval/logs")
+# Recorded per trial; all are read by the runner / environment class.
+RECORDED = ("TBENCH_VPC_DNS", "TBENCH_PYPI_MIRROR", "TBENCH_APT_SNAPSHOT_BULLSEYE",
+            "TBENCH_APT_INTRANET_MIRROR", "TBENCH_MAX_TRIAL_RETRIES",
+            "TBENCH_VERIFIER_OVERRIDE", "TBENCH_VERIFIER_MULTIPLIER",
+            "TBENCH_SETUP_MULTIPLIER")
 
 
 def main() -> int:
-    os.makedirs(JOBS_DIR, exist_ok=True)
-    queue_path = sys.argv[1]
+    queue_path, jobs_dir = sys.argv[1], sys.argv[2]
+    os.makedirs(jobs_dir, exist_ok=True)
     rows = [line.rstrip("\n").split("\t") for line in open(queue_path) if line.strip()]
-    print(f"[{time.strftime('%F %T')}] queue: {len(rows)} trials, 2 per minute", flush=True)
-    manifest = open(os.path.join(os.path.dirname(JOBS_DIR), "manifest.tsv"), "a")
+    settings = {k: os.environ.get(k, "") for k in RECORDED}
+    print(f"[{time.strftime('%F %T')}] queue: {len(rows)} trials, 2 per minute; {settings}", flush=True)
+    manifest_path = os.path.join(os.path.dirname(jobs_dir.rstrip("/")), "manifest.tsv")
+    new_manifest = not os.path.exists(manifest_path)
+    manifest = open(manifest_path, "a")
+    if new_manifest:
+        manifest.write("\t".join(("run_id", "model", "effort", "task", "launched_at") + RECORDED) + "\n")
     procs = []
     for i in range(0, len(rows), 2):
         for run_id, model, effort, task in rows[i:i + 2]:
@@ -36,27 +50,22 @@ def main() -> int:
                 "TBENCH_TASK_NAMES": task,
                 "TBENCH_N_ATTEMPTS": "1",
                 "TBENCH_N_CONCURRENT": "1",
-                "TBENCH_MAX_TRIAL_RETRIES": "1",
-                "TBENCH_VERIFIER_OVERRIDE": "7200.0",
                 "TBENCH_REASONING_EFFORT": effort,
                 "RUN_ID": run_id,
-                "JOBS_DIR": JOBS_DIR,
+                "JOBS_DIR": jobs_dir,
                 "DRY_RUN": "0",
             })
             log = open(f"{LOGS}/{run_id}.log", "ab")
-            proc = subprocess.Popen(["bash", RUNNER], env=env,
-                                    stdout=log, stderr=subprocess.STDOUT)
-            procs.append((proc, run_id))
-            manifest.write(f"{run_id}\t{model}\t{effort or 'default'}\t{task}\t"
-                           f"{time.strftime('%F %T')}\n")
+            procs.append((subprocess.Popen(["bash", RUNNER], env=env,
+                                           stdout=log, stderr=subprocess.STDOUT), run_id))
+            manifest.write("\t".join([run_id, model, effort or "default", task,
+                                      time.strftime("%F %T")] + [settings[k] for k in RECORDED]) + "\n")
             manifest.flush()
             print(f"[{time.strftime('%F %T')}] launched {run_id} ({model}, {task})", flush=True)
         if i + 2 < len(rows):
             time.sleep(60)
     manifest.close()
-    failed = [rid for proc, rid in ((p, r) for p, r in procs) if proc.wait() != 0]
-    for proc, rid in procs:
-        proc.wait()
+    failed = [rid for proc, rid in procs if proc.wait() != 0]
     print(f"[{time.strftime('%F %T')}] ALL DONE, {len(procs)} trials, "
           f"{len(failed)} runner call(s) nonzero: {failed}", flush=True)
     return 0

@@ -1,0 +1,39 @@
+e1fix_d_mteb-retrieve_1	DEEPSEEK_up5zdj	max	mteb-retrieve
+e1fix_d_mteb-retrieve_2	DEEPSEEK_up5zdj	max	mteb-retrieve
+e1fix_d_mteb-retrieve_3	DEEPSEEK_up5zdj	max	mteb-retrieve
+e1fix_d_mteb-retrieve_4	DEEPSEEK_up5zdj	max	mteb-retrieve
+e1fix_d_pytorch-model-recovery_1	DEEPSEEK_up5zdj	max	pytorch-model-recovery
+e1fix_d_pytorch-model-recovery_2	DEEPSEEK_up5zdj	max	pytorch-model-recovery
+e1fix_d_pytorch-model-recovery_3	DEEPSEEK_up5zdj	max	pytorch-model-recovery
+e1fix_d_qemu-alpine-ssh_1	DEEPSEEK_up5zdj	max	qemu-alpine-ssh
+e1fix_d_qemu-alpine-ssh_2	DEEPSEEK_up5zdj	max	qemu-alpine-ssh
+e1fix_d_qemu-alpine-ssh_3	DEEPSEEK_up5zdj	max	qemu-alpine-ssh
+e1fix_d_qemu-alpine-ssh_4	DEEPSEEK_up5zdj	max	qemu-alpine-ssh
+e1fix_d_qemu-alpine-ssh_5	DEEPSEEK_up5zdj	max	qemu-alpine-ssh
+e1fix_d_qemu-startup_1	DEEPSEEK_up5zdj	max	qemu-startup
+e1fix_d_qemu-startup_2	DEEPSEEK_up5zdj	max	qemu-startup
+e1fix_d_qemu-startup_3	DEEPSEEK_up5zdj	max	qemu-startup
+e1fix_d_qemu-startup_4	DEEPSEEK_up5zdj	max	qemu-startup
+e1fix_d_qemu-startup_5	DEEPSEEK_up5zdj	max	qemu-startup
+e1fix_d_torch-pipeline-parallelism_1	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1fix_d_torch-pipeline-parallelism_2	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1fix_d_torch-pipeline-parallelism_3	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1fix_d_torch-pipeline-parallelism_4	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1fix_d_torch-pipeline-parallelism_5	DEEPSEEK_up5zdj	max	torch-pipeline-parallelism
+e1fix_d_torch-tensor-parallelism_1	DEEPSEEK_up5zdj	max	torch-tensor-parallelism
+e1fix_d_torch-tensor-parallelism_2	DEEPSEEK_up5zdj	max	torch-tensor-parallelism
+e1fix_d_torch-tensor-parallelism_3	DEEPSEEK_up5zdj	max	torch-tensor-parallelism
+e1fix_q_mteb-retrieve_1	qwen3.6-flash-distill		mteb-retrieve
+e1fix_q_pytorch-model-cli_1	qwen3.6-flash-distill		pytorch-model-cli
+e1fix_q_pytorch-model-recovery_1	qwen3.6-flash-distill		pytorch-model-recovery
+e1fix_q_pytorch-model-recovery_2	qwen3.6-flash-distill		pytorch-model-recovery
+e1fix_q_qemu-alpine-ssh_1	qwen3.6-flash-distill		qemu-alpine-ssh
+e1fix_q_qemu-startup_1	qwen3.6-flash-distill		qemu-startup
+e1fix_q_qemu-startup_2	qwen3.6-flash-distill		qemu-startup
+e1fix_q_torch-tensor-parallelism_1	qwen3.6-flash-distill		torch-tensor-parallelism
+e1fix_d_chess-best-move_1	DEEPSEEK_up5zdj	max	chess-best-move
+e1fix_d_configure-git-webserver_1	DEEPSEEK_up5zdj	max	configure-git-webserver
+e1fix_d_gpt2-codegolf_1	DEEPSEEK_up5zdj	max	gpt2-codegolf
+e1fix_d_multi-source-data-merger_1	DEEPSEEK_up5zdj	max	multi-source-data-merger
+e1fix_q_circuit-fibsqrt_1	qwen3.6-flash-distill		circuit-fibsqrt
+e1fix_q_gcode-to-text_1	qwen3.6-flash-distill		gcode-to-text
