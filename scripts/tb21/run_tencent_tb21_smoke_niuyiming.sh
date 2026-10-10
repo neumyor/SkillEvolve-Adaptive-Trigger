@@ -34,6 +34,12 @@ fi
 : "${TBENCH_SETUP_MULTIPLIER:=3}"
 : "${TBENCH_VERIFIER_OVERRIDE:=null}"
 REASONING_EFFORT_LINE=""
+SANDBOX_ENV_BLOCK=""
+if [[ -n "${TBENCH_PYPI_MIRROR:-}" ]]; then
+  SANDBOX_ENV_BLOCK="  env:
+    PIP_INDEX_URL: \"${TBENCH_PYPI_MIRROR}\"
+    UV_INDEX_URL: \"${TBENCH_PYPI_MIRROR}\""
+fi
 if [[ -n "${TBENCH_REASONING_EFFORT:-}" ]]; then
   REASONING_EFFORT_LINE="          reasoning_effort: ${TBENCH_REASONING_EFFORT}"
 fi
@@ -170,7 +176,6 @@ orchestrator:
     max_retries: ${TBENCH_MAX_TRIAL_RETRIES}
     include_exceptions:
       - AgentSetupTimeoutError
-      - VerifierTimeoutError
       - SandboxException
       - AddTestsDirError
     exclude_exceptions: []
@@ -201,6 +206,7 @@ ${REASONING_EFFORT_LINE}
 environment:
   import_path: "${E2B_ENVIRONMENT_IMPORT}"
   delete: true
+${SANDBOX_ENV_BLOCK}
   kwargs:
     snapshot_retries: ${SNAPSHOT_RETRIES}
 ${SKILL_ENV_KWARGS}
