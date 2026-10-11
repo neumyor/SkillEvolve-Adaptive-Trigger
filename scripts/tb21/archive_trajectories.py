@@ -75,12 +75,12 @@ def main():
         return 2
 
     os.makedirs(ARCHIVE_ROOT, exist_ok=True)
-    manifests, summary = {}, {"tasks": {}}
+    header = ["rank", "task", "source", "origin_run", "trial_dir", "reward", "original_path"]
+    manifests = {label: [header] for label in LABEL.values()}
+    summary = {"tasks": {}}
     n_copied = 0
     for (tag, task), rows in sorted(picked.items()):
         label = LABEL[tag]
-        manifests.setdefault(label, []).append(
-            ["rank", "task", "source", "origin_run", "trial_dir", "reward", "original_path"])
         rewards = []
         for rank, row in enumerate(rows, 1):
             src = row["trial_dir"].rstrip("/")
