@@ -40,6 +40,7 @@
 | `recover_rolling.py` | **滚动启动器**：队列里每一行是一次独立的 runner 调用（1 个 trial），每分钟启动 2 个、不设并发上限 |
 | `audit_trials.py` | **审计 + 指标**：逐条判定每个 trial 是否有效，算出每题缺几条，输出 avg@N / pass@N。结果根目录用 `TBENCH_RESULTS_ROOT` 改（默认 node29 的 `/data2/niuyiming`），明细写到 `$TBENCH_RESULTS_ROOT/audit_<日期>.json` |
 | `build_rerun_queue.py` | 从审计结果生成补跑队列 |
+| `archive_trajectories.py` | **归档**：按审计 JSON 选出计入指标的每题前 N 条轨迹（VALID + KEEP_MODEL，与指标截断规则完全一致），整目录复制到 `$TBENCH_ARCHIVE_ROOT`（默认 `$TBENCH_RESULTS_ROOT/e1_final_archive`）。布局 `<archive>/<qwen\|dpsk>/<task>/<01..05>_<trial目录名>/`，配 `manifest_<label>.tsv`（rank、来源、原始 run、reward、原始路径）与 `summary.json`（归档内重算的指标）。样本不足会拒绝执行（`--allow-short` 强制） |
 | `rerun_queue_20261010.tsv` | 第一轮修网补跑队列（39 条：qwen 10、dpsk 29），已完成 |
 | `rerun_queue_20261011.tsv` | qwen 补到 N=5 的队列（15 条，新网络），run_id 前缀 `e1n5_q_` |
 | `secrets.env` | 密钥（E2B / LLM API key）。**gitignore，勿提交、勿推送** |
@@ -116,6 +117,16 @@ python3 audit_trials.py        # 结果根目录用 TBENCH_RESULTS_ROOT 覆盖�
 
 输出每题还缺几条、各类无效原因的计数，以及 avg@N / pass@N。逐条明细写在 `$TBENCH_RESULTS_ROOT/audit_<日期>.json`。
 判定规则就是第 5 节的异常处理契约。脚本顶部的 `REC_GLOBS` 已包含 `e1_recover`、`e1_fix`、`e1_n5` 三代补跑，另有 `CANARY` 指向同事的 qwen N=3 run（作为独立来源并入 qwen 样本）；以后再加新一代时，在那里追加一行。
+
+### 2.4 归档最终轨迹
+
+```bash
+python3 archive_trajectories.py $TBENCH_RESULTS_ROOT/audit_<日期>.json
+```
+
+只归档**计入指标**的轨迹（每题前 N 条，与指标的截断规则一字不差），整 trial 目录复制（trajectory、录像、verifier 产物、config、日志全带）。
+路径命名：`$TBENCH_ARCHIVE_ROOT/<qwen|dpsk>/<task>/<01..05>_<trial目录名>/`（默认归档根 = `$TBENCH_RESULTS_ROOT/e1_final_archive`），rank 就是指标里的截断顺序；`manifest_<label>.tsv` 记录每条的来源代、原始 run、reward、原始绝对路径，`summary.json` 在归档内重算指标交叉核对。
+任何一题样本不足都会**拒绝**执行——防止最终归档悄悄少一条。
 
 ## 3. runner 的开关（全部由环境变量控制）
 
