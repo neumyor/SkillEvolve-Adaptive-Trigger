@@ -11,7 +11,10 @@ Pre-registered rules (fixed before looking at the data):
                 (AgentTimeoutError, tmux keystroke errors, context/parse errors)
   RUNNING       launched recovery trial without result.json
 
-Targets: qwen 2 valid trials per task, dpsk 5.
+Targets: 5 valid trials per task for both models.  qwen's sample comes from our
+original N=2 run plus a colleague's identical-config N=3 canary run (2026-10-01,
+old network) plus rerun generations.  We do NOT distinguish pre/post
+network-fix trials in the statistics (user decision 2026-10-11).
 """
 import collections, glob, json, os, re, sys, time
 
@@ -24,11 +27,21 @@ MAIN = {
     "d": os.path.join(RESULTS_ROOT, "e1_full_dsv4max_5att/jobs/e1_full_dsv4max_5att"),
 }
 # Every recovery generation, in launch order: e1_recover (e1rec_*, old network),
-# then e1_fix (e1fix_*, VPC DNS + intranet mirrors).  Add new generations here.
+# e1_fix (e1fix_*, VPC DNS + intranet mirrors), e1_n5 (e1n5_*, top-up to N=5).
+# Add new generations here.
 REC_GLOBS = (os.path.join(RESULTS_ROOT, "e1_recover/jobs/e1rec_{tag}_*"),
-             os.path.join(RESULTS_ROOT, "e1_fix/jobs/e1fix_{tag}_*"))
-TARGET = {"q": 2, "d": 5}
-TASKS_DIR = os.environ.get("TBENCH_TASKS_DIR", os.path.join(HERE, "vendor/tasks"))
+             os.path.join(RESULTS_ROOT, "e1_fix/jobs/e1fix_{tag}_*"),
+             os.path.join(RESULTS_ROOT, "e1_n5/jobs/e1n5_{tag}_*"))
+# A colleague's qwen N=3 run (2026-10-01): identical config and old network, so
+# it merges as a source of its own, ranked with the original runs.  node29 path.
+CANARY = {"q": "/data2/liyishan/tbench2-openclaw-min/jobs/"
+               "tb21_version_canary_20261001/tb21_full_after_version_canary_20261001"}
+TARGET = {"q": 5, "d": 5}
+# Task list: the vendored copy inside this bundle, or (node29) liyishan's checkout.
+_VENDOR_TASKS = os.path.join(HERE, "vendor/tasks")
+_NODE29_TASKS = "/data2/liyishan/tbench2-openclaw-min/sources/terminal-bench-2-1-modelbest/tasks"
+TASKS_DIR = os.environ.get("TBENCH_TASKS_DIR") or (
+    _VENDOR_TASKS if os.path.isdir(_VENDOR_TASKS) else _NODE29_TASKS)
 
 INFRA_EXC = {"AgentSetupTimeoutError", "VerifierTimeoutError", "SandboxException",
              "AddTestsDirError", "EnvironmentStartTimeoutError", "DownloadVerifierDirError",
@@ -92,6 +105,9 @@ rows = []
 for tag in ("q", "d"):
     for tdir in sorted(glob.glob(MAIN[tag] + "/*__*")):
         rows.append((tag, "原始", task_of(tdir), tdir) + audit_trial(tdir))
+    if tag in CANARY and os.path.isdir(CANARY[tag]):
+        for tdir in sorted(glob.glob(CANARY[tag] + "/*__*")):
+            rows.append((tag, "canary", task_of(tdir), tdir) + audit_trial(tdir))
     for rid in [d for g in REC_GLOBS for d in sorted(glob.glob(g.format(tag=tag)))]:
         tds = glob.glob(rid + "/*__*")
         if not tds:
@@ -105,7 +121,7 @@ out = {"rules": __doc__, "trials": [], "per_task": {}}
 for tag, label in (("q", "qwen"), ("d", "dpsk")):
     mine = [r for r in rows if r[0] == tag]
     print(f"\n==================== {label}（目标每题 {TARGET[tag]} 条有效）====================")
-    for src in ("原始", "补跑"):
+    for src in ("原始", "canary", "补跑"):
         c = collections.Counter(r[4] for r in mine if r[1] == src)
         print(f"  {src}: 共 {sum(c.values())} 条  " + "  ".join(f"{k}={v}" for k, v in sorted(c.items())))
     print("  无效原因分布:")
@@ -152,7 +168,7 @@ print("\n逐条明细已写入 " + AUDIT_JSON)
 print("\n==================== 指标（仅有效轨迹 + 模型自身失败，按目标数截断）====================")
 for tag, label in (("q", "qwen"), ("d", "dpsk")):
     mine = [r for r in rows if r[0] == tag and r[4] in ("VALID", "KEEP_MODEL")]
-    order = {"原始": 0, "补跑": 1}
+    order = {"原始": 0, "canary": 1, "补跑": 2}
     per_task, short = {}, []
     for t in all_tasks:
         tr = sorted((r for r in mine if r[2] == t), key=lambda r: (order[r[1]], r[3]))[:TARGET[tag]]

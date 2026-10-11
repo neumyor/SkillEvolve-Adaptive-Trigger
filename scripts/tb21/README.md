@@ -40,7 +40,8 @@
 | `recover_rolling.py` | **滚动启动器**：队列里每一行是一次独立的 runner 调用（1 个 trial），每分钟启动 2 个、不设并发上限 |
 | `audit_trials.py` | **审计 + 指标**：逐条判定每个 trial 是否有效，算出每题缺几条，输出 avg@N / pass@N。结果根目录用 `TBENCH_RESULTS_ROOT` 改（默认 node29 的 `/data2/niuyiming`），明细写到 `$TBENCH_RESULTS_ROOT/audit_<日期>.json` |
 | `build_rerun_queue.py` | 从审计结果生成补跑队列 |
-| `rerun_queue_20261010.tsv` | 当前的补跑队列（39 条：qwen 10、dpsk 29） |
+| `rerun_queue_20261010.tsv` | 第一轮修网补跑队列（39 条：qwen 10、dpsk 29），已完成 |
+| `rerun_queue_20261011.tsv` | qwen 补到 N=5 的队列（15 条，新网络），run_id 前缀 `e1n5_q_` |
 | `secrets.env` | 密钥（E2B / LLM API key）。**gitignore，勿提交、勿推送** |
 | `env.sh.example` | 按主机覆盖默认路径时的参考（新机器通常不需要） |
 | `vendor/` | 第二、三层的完整快照（见上表） |
@@ -114,7 +115,7 @@ python3 audit_trials.py        # 结果根目录用 TBENCH_RESULTS_ROOT 覆盖�
 ```
 
 输出每题还缺几条、各类无效原因的计数，以及 avg@N / pass@N。逐条明细写在 `$TBENCH_RESULTS_ROOT/audit_<日期>.json`。
-判定规则就是第 5 节的异常处理契约。脚本顶部的 `REC_GLOBS` 已包含 `e1_recover` 和 `e1_fix` 两代补跑；以后再加新一代时，在那里追加一行。
+判定规则就是第 5 节的异常处理契约。脚本顶部的 `REC_GLOBS` 已包含 `e1_recover`、`e1_fix`、`e1_n5` 三代补跑，另有 `CANARY` 指向同事的 qwen N=3 run（作为独立来源并入 qwen 样本）；以后再加新一代时，在那里追加一行。
 
 ## 3. runner 的开关（全部由环境变量控制）
 
@@ -139,7 +140,7 @@ python3 audit_trials.py        # 结果根目录用 TBENCH_RESULTS_ROOT 覆盖�
 | Debian 11（bullseye）已停止安全支持，security 索引里列出的 curl 在软件池中已删除，官方源和腾讯镜像都返回 404 → 装不上 curl → 装不上 uv → 评测从未运行（qemu-startup、qemu-alpine-ssh） | 两个模型在这两题上的 14 条轨迹全部如此 | `TBENCH_APT_SNAPSHOT_BULLSEYE=1`：只启用题目镜像里作者自己注释掉的 `snapshot.debian.org` 源，只对 bullseye 镜像生效。实测 apt update 需要约 230 秒 |
 | 公网镜像 `mirrors.cloud.tencent.com` 走公网时，大文件会被截断 | smoke 中 torch 重下 6 次后 zip 损坏 | 不要用。配了 VPC DNS 后，这个域名也会解析到内网 |
 
-**这些开关会改变 agent 的环境**：agent 自己用 pip/uv 装包会变快，在 qemu 题里用 apt 会走 snapshot 源。所以用这套设置跑出的轨迹，和第一批全量 run 的条件不同，统计时要单独标注。
+**这些开关会改变 agent 的环境**：agent 自己用 pip/uv 装包会变快，在 qemu 题里用 apt 会走 snapshot 源。所以用这套设置跑出的轨迹，和第一批全量 run 的条件不同。（2026-10-11 决定：统计中**不区分**网络修复前后的轨迹，该差异不影响正确性评估。）
 
 **还没解决的**：从 GitHub 下载的部分（装 uv、uv 下载 Python 解释器、个别题的 `git clone`），这些不走 PyPI；有 5 次和下载无关的评测超时（configure-git-webserver 等），原因未知。
 
@@ -196,12 +197,15 @@ python3 audit_trials.py        # 结果根目录用 TBENCH_RESULTS_ROOT 覆盖�
   e1_full_q36flash_2att/          # 第一批全量：qwen3.6-flash-distill，89 题 × 2，默认 effort，旧网络
   e1_full_dsv4max_5att/           # 第一批全量：DEEPSEEK_up5zdj，89 题 × 5，reasoning_effort=max，旧网络
   e1_recover/                     # 第一轮补跑（e1rec_*），旧网络，部分伪 0 分
-  e1_fix/                         # 修好网络后的补跑（e1fix_*），2026-10-10 17:27 启动
+  e1_fix/                         # 修好网络后的补跑（e1fix_*），2026-10-10 完成（40 条）
+  e1_n5/                          # qwen 补到 N=5（e1n5_*），2026-10-11 启动（15 条）
   audit_*.json                    # 最新审计明细
 ```
 
-## 7. 当前状态（2026-10-10 晚）
+## 7. 当前状态（2026-10-11）
 
-- e1_fix 补跑 39 条（+1 条中途补的 pytorch-model-recovery_6）已全部投喂，qemu 两题 10 条全 1.0（上一批全是伪 0 分）；
-- 等全部出结果后跑 `audit_trials.py` 出最终 avg@N / pass@N；
-- 补跑之前的指标：qwen avg@2 = 0.4326、pass@2 = 45/89；dpsk avg@5 = 0.6152、pass@5 = 74/89。
+- **两模型统一 N=5 口径**（2026-10-11 决定）：不区分网络修复前后的轨迹；
+- 同事 2026-10-01 的 qwen canary run（`/data2/liyishan/tbench2-openclaw-min/jobs/tb21_version_canary_20261001/`，N=3，配置与我们原始 run 逐字段一致）已并入审计：267 条中 252 条可用（250 有效 + 2 模型失败）；
+- e1_fix 补跑（40 条）2026-10-10 完成：仅 1 条伪 0（GitHub 下载 uv 失败，已用 `_6` 补上拿到 1.0）。qemu 两题在 dpsk 上 10/10 通过，snapshot 源修复彻底生效；
+- dpsk 已满 5 条/题；qwen 合并 canary 后 77/89 题满 5 条，剩 12 题缺 15 条，2026-10-11 启动 e1_n5 补跑（`rerun_queue_20261011.tsv`，新网络）；
+- e1_n5 完成后跑 `audit_trials.py` 出最终 avg@5 / pass@5。补齐前的参考值：qwen avg@5=0.4556、pass@5=56/89（12 题样本不足）；dpsk avg@5=0.6315、pass@5=76/89（全满）。

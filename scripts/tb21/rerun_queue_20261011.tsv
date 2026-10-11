@@ -1,0 +1,15 @@
+e1n5_q_qemu-startup_1	qwen3.6-flash-distill		qemu-startup
+e1n5_q_qemu-startup_2	qwen3.6-flash-distill		qemu-startup
+e1n5_q_qemu-startup_3	qwen3.6-flash-distill		qemu-startup
+e1n5_q_qemu-alpine-ssh_1	qwen3.6-flash-distill		qemu-alpine-ssh
+e1n5_q_qemu-alpine-ssh_2	qwen3.6-flash-distill		qemu-alpine-ssh
+e1n5_q_sam-cell-seg_1	qwen3.6-flash-distill		sam-cell-seg
+e1n5_q_pytorch-model-cli_1	qwen3.6-flash-distill		pytorch-model-cli
+e1n5_q_torch-tensor-parallelism_1	qwen3.6-flash-distill		torch-tensor-parallelism
+e1n5_q_build-pov-ray_1	qwen3.6-flash-distill		build-pov-ray
+e1n5_q_circuit-fibsqrt_1	qwen3.6-flash-distill		circuit-fibsqrt
+e1n5_q_configure-git-webserver_1	qwen3.6-flash-distill		configure-git-webserver
+e1n5_q_feal-linear-cryptanalysis_1	qwen3.6-flash-distill		feal-linear-cryptanalysis
+e1n5_q_mcmc-sampling-stan_1	qwen3.6-flash-distill		mcmc-sampling-stan
+e1n5_q_polyglot-rust-c_1	qwen3.6-flash-distill		polyglot-rust-c
+e1n5_q_tune-mjcf_1	qwen3.6-flash-distill		tune-mjcf
