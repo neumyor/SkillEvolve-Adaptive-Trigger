@@ -6,7 +6,9 @@ Pre-registered rules (fixed before looking at the data):
                 (AgentSetupTimeoutError, VerifierTimeoutError, SandboxException,
                  AddTestsDirError, transport/RPC errors, unknown/no exception)
   RERUN_FAKE0   reward present but pytest never collected anything
-                (verifier setup / download failed -> fake model failure)
+                (verifier setup / download failed -> fake model failure;
+                second-pass reviewed per README 5.4 -- if the agent broke the
+                sandbox's own network it is KEEP_MODEL, see RUN_OVERRIDES)
   KEEP_MODEL    no reward, exception is the model's own doing
                 (AgentTimeoutError, tmux keystroke errors, context/parse errors)
   RUNNING       launched recovery trial without result.json
@@ -81,6 +83,10 @@ def audit_trial(tdir):
         r = json.load(open(tdir + "/result.json"))
     except FileNotFoundError:
         return "RUNNING", "无result.json", None
+    rid = os.path.basename(os.path.dirname(tdir))
+    if rid in RUN_OVERRIDES:
+        st, why = RUN_OVERRIDES[rid]
+        return st, why, None
     reward = (r.get("verifier_result") or {}).get("rewards", {}).get("reward")
     exc = r.get("exception_info") or {}
     etype, emsg = exc.get("exception_type") or "", str(exc.get("exception_message") or "")
@@ -95,6 +101,21 @@ def audit_trial(tdir):
         return "VALID", "", float(reward)
     why = [name for name, rx in SETUP_FAIL if rx.search(log)] or ["pytest未运行(原因未识别)"]
     return "RERUN_FAKE0", "+".join(why), float(reward)
+
+
+# Fake zeros get a SECOND PASS (README 5.4): if the verifier could not even
+# reach the infra mirror (Connection refused) while sibling trials at the same
+# time succeeded, inspect the agent trajectory.  An agent that rewired the
+# sandbox's OWN network (iptables/socat on the host, eth0 IP changed, tap
+# devices, a host-side sshd impersonating the VM) caused the failure itself ->
+# model failure, kept as 0, no rerun (same class as the tmux cases).
+# Verdicts of that manual review are recorded here, keyed by run_id.
+RUN_OVERRIDES = {
+    # verifier: tcp connect refused to mirrors.tencentyun.com; trajectory shows
+    # apt-get install iptables socat, nat DNAT/MASQUERADE rules, tap0, and
+    # `ifconfig eth0 10.0.2.15/24 up` replacing the sandbox's own eth0 IP.
+    "e1n5_q_qemu-alpine-ssh_1": ("KEEP_MODEL", "agent改坏沙箱网络(人工复核)"),
+}
 
 
 def task_of(tdir):

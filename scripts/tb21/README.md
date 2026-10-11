@@ -168,6 +168,7 @@ python3 audit_trials.py        # 结果根目录用 TBENCH_RESULTS_ROOT 覆盖�
 | **PyPI 包下载失败 / zip 损坏**（`Could not find EOCD` / `Invalid zip`） | 伪 0 分 | 补跑 | 下载中途断开。配内网 PyPI 镜像后基本消失 |
 | **apt 包 404**（bullseye 的 curl 已从池中下架，索引还在） | 伪 0 分 | 补跑 | 过期发行版的通病。根治靠 snapshot 源开关（第 4 节），e1_fix 里 qemu 两题已验证修复 |
 | **apt 锁冲突**（`Could not get lock`，agent 占着 apt 时 verifier 也要装包） | 伪 0 分 | 补跑 | 时序冲突，与模型无关 |
+| **内网镜像连接被拒 + agent 改过宿主网络**（`Connection refused` 到 mirrors.tencentyun.com，且轨迹里有 iptables/改 eth0 IP 等） | 模型自身失败 | **保留，计 0 分，不补跑** | agent 把沙箱自己的网络栈改坏了，同 tmux 被搞坏一类；判定走 5.4 的二次分析 |
 | **uvx: command not found**（装 uv 那步失败的连锁反应） | 伪 0 分 | 补跑 | 上游失败的下游表现 |
 | **AgentSetupTimeoutError / EnvironmentStartTimeoutError**（沙箱没起来） | 基础设施失败 | 先走第①级自动重跑；仍失败则审计后补跑 | 冷启动突发/慢，滚动投喂已大幅减少 |
 | **SandboxException / AddTestsDirError / DownloadVerifierDirError / RewardFileNotFoundError** | 基础设施失败 | 同上 | 沙箱侧问题 |
@@ -180,10 +181,24 @@ python3 audit_trials.py        # 结果根目录用 TBENCH_RESULTS_ROOT 覆盖�
 
 ### 5.3 伪 0 分的总判据
 
-有 reward（通常是 0），**但 verifier 日志（`verifier/test-stdout.txt`）里没有 pytest 的 `collected N items`** → 评测从未真正运行，判伪 0 分，必须补跑。
+有 reward（通常是 0），**但 verifier 日志（`verifier/test-stdout.txt`）里没有 pytest 的 `collected N items`** → 评测从未真正运行，判伪 0 分。
 判据依据：89 题的 verifier 全部用 pytest；dpsk 全部 240 条得 1 分的评测日志都含 `collected`——它是"评测确实跑过"的可靠标志。
 
-### 5.4 指标算法（审计脚本自动执行）
+### 5.4 伪 0 分必须做二次分析（2026-10-11 新增）
+
+**伪 0 分 ≠ 一律补跑。** 伪 0 分只说明"评测没跑起来"，不说明原因在我们这边。每条伪 0 分都要再做两步：
+
+1. **定位失败环节**：看 verifier 日志，失败发生在下载 uv、拉 Python 解释器、还是拉包索引；
+2. **排除"模型自己造成的"**：如果失败是到内网镜像或基础设施的**连接被拒**（`Connection refused`），且**同时段其它 trial 对同一镜像一切正常**，说明镜像和网络本身没问题——这时必须打开该 trial 的 agent 轨迹（`agent/trajectory.json`）检查 agent 是否改动了**沙箱自身**的网络：
+   - 在宿主上装 iptables / socat / 网络服务（如用宿主 sshd 冒充 VM 的 SSH）；
+   - 加 NAT 规则（DNAT / MASQUERADE）、清空 iptables；
+   - 改沙箱自己 eth0 的 IP、建 tap 设备、改路由。
+
+   命中任何一条 → **改判"模型自身失败"，保留计 0 分，不补跑**（同 tmux 被模型搞坏一类）。人工复核的结论记在 `audit_trials.py` 的 `RUN_OVERRIDES` 表里（按 run_id 索引，可追溯）。
+
+**实例**：`e1n5_q_qemu-alpine-ssh_1`（2026-10-11）——verifier 到内网 PyPI 镜像拉 pytest 索引时三次 `Connection refused`；同时段同批 14 条 trial 对镜像全部正常；轨迹显示该 agent 在沙箱宿主上 `apt-get install iptables socat`、加 DNAT/MASQUERADE 规则、建 tap0、用 `ifconfig eth0 10.0.2.15/24 up` 把沙箱自己的 eth0 IP 改成了 VM 应用的地址，并在宿主上装 sshd 监听 2222 冒充 VM。人工复核结论：agent 自己改坏了沙箱网络，计 0 分，不补跑。对照组：同题 `_2`（1.0 分）只在 VM 内部配网络，从未动宿主网络栈。
+
+### 5.5 指标算法（审计脚本自动执行）
 
 每题取前 N 条**有效**轨迹（原始 run 优先，然后按补跑先后），avg@N = 每题成功率再对题取平均；pass@N = 至少成功一次的题占比。
 **分母固定为 89 题**；轨迹不足 N 条的题单独列出（样本不足，不补齐也不剔除）；补跑多出的轨迹会被截断，不能抬高 pass@N。
