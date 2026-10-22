@@ -309,13 +309,25 @@ class TencentSandboxTerminus2(Terminus2):
 
 
 class TencentSkillTerminus2(TencentSandboxTerminus2):
-    """Tencent-routed Terminus-2 that explicitly activates the mounted skill."""
+    """Tencent-routed Terminus-2 that lets Harbor discover per-skill folders.
+
+    The TaskSkill environment mounts one task directory at
+    ``/opt/openclaw-skills/<task>/``. Each accepted skill is a
+    ``<skill>/SKILL.md`` directory under it. Terminus-2's own
+    ``_build_skills_section`` scans ``skills_dir`` at depth two, parses
+    the YAML frontmatter, and appends ``<available_skills>`` to the
+    initial prompt. Pointing ``skills_dir`` at the task directory is the
+    whole activation; there is no single SKILL.md to name in the prompt.
+    """
 
     def __init__(
         self,
         *args: Any,
         skills_dir: str = "/opt/openclaw-skills",
-        skill_read_suffix: str = "Please read the skill first.",
+        skill_read_suffix: str = (
+            "If an <available_skills> section is present, read the "
+            "location of a relevant skill before executing task commands."
+        ),
         **kwargs: Any,
     ) -> None:
         self._skill_read_suffix = skill_read_suffix.strip()
@@ -328,14 +340,24 @@ class TencentSkillTerminus2(TencentSandboxTerminus2):
         environment: BaseEnvironment,
         context: Any,
     ) -> None:
-        source, target = environment._task_skill_source()
-        skill_path = str(target / "SKILL.md")
-        self._append_skill_activation(skill_path, str(source / "SKILL.md"))
-        instruction = f"{instruction.rstrip()}\n\n{self._skill_read_suffix} Read {skill_path} before executing task commands."
+        get_task_skill = getattr(environment, "_task_skill_source", None)
+        if callable(get_task_skill):
+            source, target = get_task_skill()
+            self.skills_dir = str(target)
+            self._selected_skills_dir = str(target)
+            self._append_skill_activation(str(target), str(source))
+        else:
+            self.skills_dir = self._selected_skills_dir
+            self._append_skill_activation(self._selected_skills_dir, "")
+        instruction = f"{instruction.rstrip()}\n\n{self._skill_read_suffix}"
         await super().run(instruction, environment, context)
 
-    def _append_skill_activation(self, skill_path: str, source_path: str) -> None:
+    def _append_skill_activation(self, skills_dir: str,
+                                 source_dir: str) -> None:
         path = self.logs_dir / "skill_activation.json"
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"skill_path": skill_path, "source_path": source_path,
-                                   "load_stage": "after_selection"}) + "\n")
+        path.write_text(json.dumps({
+            "skills_dir": skills_dir,
+            "source_dir": source_dir,
+            "load_stage": "native_discovery",
+        }) + "\n")

@@ -260,15 +260,33 @@ class TaskSkillEnvironmentTests(unittest.IsolatedAsyncioTestCase):
 
 
 class SkillTerminusTests(unittest.IsolatedAsyncioTestCase):
-    async def test_skill_agent_appends_read_instruction(self) -> None:
-        agent = TencentSkillTerminus2.__new__(TencentSkillTerminus2)
-        agent._skill_read_suffix = "Please read the skill first."
-        with patch.object(TencentSandboxTerminus2, "run", new=AsyncMock()) as run:
-            await agent.run("Solve the task.", SimpleNamespace(), SimpleNamespace())
-        self.assertEqual(
-            run.await_args.args[0],
-            "Solve the task.\n\nPlease read the skill first.",
-        )
+    async def test_skill_agent_scans_the_task_directory(self) -> None:
+        class _Environment:
+            def _task_skill_source(self):
+                return (Path("/skills/train-fasttext"),
+                        Path("/opt/openclaw-skills/train-fasttext"))
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            agent = TencentSkillTerminus2.__new__(TencentSkillTerminus2)
+            agent._skill_read_suffix = "Please read the skill first."
+            agent._selected_skills_dir = "/opt/openclaw-skills"
+            agent.logs_dir = Path(temp_dir)
+            with patch.object(
+                    TencentSandboxTerminus2, "run", new=AsyncMock()) as run:
+                await agent.run("Solve the task.", _Environment(),
+                                SimpleNamespace())
+            self.assertEqual(agent.skills_dir,
+                             "/opt/openclaw-skills/train-fasttext")
+            self.assertEqual(
+                run.await_args.args[0],
+                "Solve the task.\n\nPlease read the skill first.",
+            )
+            record = json.loads(
+                (Path(temp_dir) / "skill_activation.json").read_text())
+            self.assertEqual(record["skills_dir"],
+                             "/opt/openclaw-skills/train-fasttext")
+            self.assertEqual(record["source_dir"],
+                             "/skills/train-fasttext")
 
 
 class FakeModelEnvironment:
