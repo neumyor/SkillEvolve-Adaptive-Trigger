@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import json
 import logging
 import os
@@ -260,6 +261,14 @@ class TaskSkillEnvironmentTests(unittest.IsolatedAsyncioTestCase):
 
 
 class SkillTerminusTests(unittest.IsolatedAsyncioTestCase):
+    def test_default_read_suffix_requires_reading_a_skill(self) -> None:
+        default = inspect.signature(
+            TencentSkillTerminus2.__init__
+        ).parameters["skill_read_suffix"].default
+        self.assertIn("MUST cat at least one skill file", default)
+        self.assertIn("<available_skills>", default)
+        self.assertIn("catalog.md", default)
+
     async def test_skill_agent_scans_the_task_directory(self) -> None:
         class _Environment:
             def _task_skill_source(self):

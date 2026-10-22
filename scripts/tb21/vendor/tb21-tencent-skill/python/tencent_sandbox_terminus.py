@@ -325,8 +325,10 @@ class TencentSkillTerminus2(TencentSandboxTerminus2):
         *args: Any,
         skills_dir: str = "/opt/openclaw-skills",
         skill_read_suffix: str = (
-            "If an <available_skills> section is present, read the "
-            "location of a relevant skill before executing task commands."
+            "You MUST cat at least one skill file listed in "
+            "<available_skills> before running any task command. Choose the "
+            "skill whose description best matches the task. If the list is "
+            "no longer visible, cat catalog.md in the same folder."
         ),
         **kwargs: Any,
     ) -> None:
