@@ -36,6 +36,8 @@ benchmark/searchqa-eval/data/
 
 # Nested git repositories are external dependencies, never vendored
 repos/
+# scripts/tb21 is its own repository; its history was split from this monorepo
+scripts/tb21/
 
 # Build artifacts and local tooling
 build/
