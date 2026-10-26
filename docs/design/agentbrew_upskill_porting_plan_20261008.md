@@ -1,5 +1,7 @@
 # AgentBrew / UpSkill 在 terminalbench-eval 的移植方案与复核
 
+> **Deprecated protocol (2026-10-26):** 本文档记录旧的 41/20/28 切分。当前 AgentBrew TB2.1 使用 25/64，见 `benchmark/terminalbench-eval/docs/AGENTBREW.md`。
+
 日期:2026-10-08。依据:论文 v1、已拉取 UpSkill、本地已安装 Harbor、任务缓存/切分、terminalbench-eval 注入与结果接口。本轮只修订方案,未实现移植器、调用模型或启动容器实验。
 
 **目标更新:** 用户已确认在现有TB2.0/Terminus上保留论文提出的方法。执行设计以[论文方法复现契约](../reports/agentbrew_tb20_paper_faithful_adaptation_20261008.md)为准。本文保留为TB2.0源码审计与旧适配方案记录;其中批量构建、整类prefix不再作为忠实论文方法的主实现。现有41/20/28可继续用于本地统一比较,但须声明与作者25/64的区别。已发现的源码缺陷仍然有效。

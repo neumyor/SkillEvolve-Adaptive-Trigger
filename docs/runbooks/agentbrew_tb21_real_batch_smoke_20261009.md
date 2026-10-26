@@ -1,5 +1,7 @@
 # AgentBrew TB2.1 真实批调度 smoke
 
+> **Deprecated protocol (2026-10-26):** 本文档记录旧的 41/20/28 切分。当前 AgentBrew TB2.1 使用 25/64，见 `benchmark/terminalbench-eval/docs/AGENTBREW.md`。
+
 日期：2026-10-09。用户授权尝试真实1–2单元完整smoke；正式评测和heartbeat继续暂停。
 
 ## 启动前固定协议

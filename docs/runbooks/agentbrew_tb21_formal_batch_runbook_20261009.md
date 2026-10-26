@@ -1,5 +1,7 @@
 # AgentBrew TB2.1 Batch 正式运行
 
+> **Deprecated protocol (2026-10-26):** 本文档记录旧的 41/20/28 切分。当前 AgentBrew TB2.1 使用 25/64，见 `benchmark/terminalbench-eval/docs/AGENTBREW.md`。
+
 用户于2026-10-09授权启动正式评测，并在正式运行中定位问题，特别检查并发。完整教学分支在固定smoke中未触发的限制已披露；本次正式运行保留该风险，不扩大预算或筛选失败。
 
 ## 运行身份

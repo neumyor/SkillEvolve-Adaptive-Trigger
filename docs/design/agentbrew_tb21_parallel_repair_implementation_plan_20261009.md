@@ -1,5 +1,7 @@
 # AgentBrew TB2.1 并行修复实施计划
 
+> **Deprecated protocol (2026-10-26):** 本文档记录旧的 41/20/28 切分。当前 AgentBrew TB2.1 使用 25/64，见 `benchmark/terminalbench-eval/docs/AGENTBREW.md`。
+
 日期：2026-10-09。依据：UpSkill `ed42b147411bde72620a9a61bc956693413b0607` 的TB脚本，以及 `agentbrew_tb21_upstream_parallel_audit_20261009.md` 的运行证据。用户授权多个子代理并行修改；正式评测和自动检查仍暂停。
 
 ## 1. 复核后的实施边界

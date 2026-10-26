@@ -1,5 +1,7 @@
 # AgentBrew TB2.1 remote formal runbook
 
+> **Deprecated protocol (2026-10-26):** 本文档记录旧的 41/20/28 切分。当前 AgentBrew TB2.1 使用 25/64，见 `benchmark/terminalbench-eval/docs/AGENTBREW.md`。
+
 The formal run is hosted at `/home/xinhaidong/agentbrew-tb21` on `10.31.112.40`
 and writes to `outputs/agentbrew_tb21_formal_20261008`. It uses the frozen
 TB2.1 contract: 41 evolve tasks, then a frozen pool, then 28 test tasks and 28
